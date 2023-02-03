@@ -1,6 +1,4 @@
 import requests
-import emoji
-from emoji import SMILE
 
 import telebot
 import logger as log
@@ -203,7 +201,13 @@ def bot_message(message):
             mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
                    f'\nВам придёт уведомление о необходимости записаться к нотариусу <b>{notarius}</b>' \
                    f'\n{zapros}💁'
+
             bot.send_message(message.chat.id, mess, parse_mode="html")
+            bot.send_message(message.from_user.id,
+                             'Так же вы можете найти интересующую Вас информацию о наследственном деле на '
+                             'ОФИЦИАЛЬНОМ сайте нотариата Республики Беларусь\n'
+                             '*Перейдя по ссылке*\n' + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
+                             parse_mode='Markdown')
 
         elif message.text == 'Перейти на сайт и ознакомиться':
             log.log_res(message)
@@ -230,10 +234,13 @@ def bot_message(message):
 
         elif message.text == "Назад":
             log.log_res(message)
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+
+            button1 = types.KeyboardButton('Информация о моём деле')
             button2 = types.KeyboardButton('Перейти на сайт и ознакомиться')
             button3 = types.KeyboardButton('Написать e-mail')
-            markup.add(button2, button3)
+
+            markup.add(button1, button2, button3)
             bot.send_message(message.chat.id, "Назад", reply_markup=markup)
 
         elif message.text == "контора Витебского нотариального округа":
