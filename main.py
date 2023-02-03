@@ -40,6 +40,7 @@ def do_work():
     while True:
         """метод ожидания нужного времени и даты для уведомления второй поток"""
         print("3...")
+        """уведомление, когда пришли ответы на все запросы по НД"""
         if DT.datetime.now().strftime("%H:%M") == then3:
             print("4...")
             print("then3 ", then3)
@@ -51,12 +52,12 @@ def do_work():
 
                 params = {
                     'chat_id': i[0],
-                    'text': f'{i[2]} {i[3]}\nНа все запросы по Вашему делу пришли ответы!!!'
+                    'text': f'{i[2]} {i[3]}\n\nНа все запросы по Вашему делу пришли ответы!!!'
                             f'Вам необходимо записаться к нотариусу {i[10]} в срок до {i[9]}',
                 }
                 response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                         params=params)
-
+        """уведомление за месяц до срока 6 месяцев"""
         if DT.datetime.now().strftime("%H:%M") == then or DT.datetime.now().strftime("%H:%M") == then2:
             print("5... if == ")
             try:
@@ -73,7 +74,7 @@ def do_work():
                         print(row[0])
                         params = {
                             'chat_id': row[0],
-                            'text': f'{row[2]} {row[3]}\nВам необходимо записаться к нотариусу {row[10]} в срок до {row[9]}',
+                            'text': f'{row[2]} {row[3]}\n\nВам необходимо записаться к нотариусу {row[10]} в срок до {row[9]}',
                         }
                         response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                                 params=params)
@@ -110,10 +111,15 @@ def start(message):
 
     photo = open('logo.jpg', 'rb')
 
-    mess = f'<b>Здравствуйте,</b>\n <b>{message.from_user.first_name} <u>{message.from_user.last_name}' \
-           f'</u></b>\nВас приветствует бот Нотариальной конторы Оршанского района и города Орши\n' \
-           f'Для дальнейшего уведомления ВАС об информации по Вашему делу введите ' \
-           f'<b><u>{"ВАШУ ФАМИЛИЮ И ПОСЛЕДНИЕ 4 ЦИФРЫ МОБИЛЬНОГО ТЕЛЕФОНА через пробел"}</u>\n{"Например: Иванов 1234"}</b>'
+    name = message.from_user.first_name
+    if message.from_user.last_name == None:
+        last_name = ""
+    else:
+        last_name = message.from_user.last_name
+    mess = f'<b>Здравствуйте,</b> <b>{name} <u>{last_name}' \
+           f'</u></b>\n\nВас приветствует бот Нотариальной конторы Оршанского района и города Орши\n' \
+           f'Для дальнейшего уведомления ВАС по Вашему наследственному делу введите ' \
+           f'<b><u>{"ВАШУ ФАМИЛИЮ И ПОСЛЕДНИЕ 4 ЦИФРЫ МОБИЛЬНОГО ТЕЛЕФОНА через пробел"}</u>\n\n{"Например: Иванов 1234"}</b>'
 
     bot.send_photo(message.chat.id, photo)
     msg = bot.reply_to(message, mess, parse_mode="html")
@@ -177,6 +183,11 @@ def send_sticker(message):
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
     if message.chat.type == 'private':
+        name = message.from_user.first_name
+        if message.from_user.last_name == None:
+            last_name = "!"
+        else:
+            last_name = message.from_user.last_name
 
         if message.text == 'Перейти на сайт и ознакомиться':
             log.log_res(message)
@@ -245,7 +256,7 @@ def bot_message(message):
             bot.send_message(message.chat.id, "написать письмо?", reply_markup=markup)
 
         else:
-            mess = f'{message.text}\n\n<b>{message.from_user.first_name} <u>{message.from_user.last_name}</u></b>' \
+            mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
                    f'\n\nЯ Вас не понимаю!! '
 
             bot.send_message(message.chat.id, mess + '\U0001F534', parse_mode="html")
