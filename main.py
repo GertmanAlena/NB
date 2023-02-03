@@ -5,7 +5,7 @@ from emoji import SMILE
 import telebot
 import logger as log
 from telebot.types import InlineKeyboardButton
-from aifc import Error
+
 import time
 import config
 import datetime as DT
@@ -53,13 +53,14 @@ def do_work():
                 params = {
                     'chat_id': i[0],
                     'text': f'{i[2]} {i[3]}\n\nНа все запросы по Вашему делу пришли ответы!!!'
-                            f'Вам необходимо записаться к нотариусу {i[10]} в срок до {i[9]}',
+                            f'\nВам необходимо записаться к нотариусу {i[10]} в срок до {i[9]}',
                 }
                 response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                         params=params)
         """уведомление за месяц до срока 6 месяцев"""
         if DT.datetime.now().strftime("%H:%M") == then or DT.datetime.now().strftime("%H:%M") == then2:
             print("5... if == ")
+            from _locale import Error
             try:
                 cursor = db.cursor()
                 sql = """select * from personNotary where data_sms = ? """
@@ -150,8 +151,9 @@ def create_id(message):
 
             button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
             button2 = types.KeyboardButton('Написать e-mail')
+            button3 = types.KeyboardButton('Информация о моём деле')
 
-            markup.add(button1, button2)
+            markup.add(button1, button2, button3)
 
             mess = f'{message.from_user.first_name} {message.from_user.last_name}' \
                    f'\n✅Вы успешно зарегистрированы!\nВаш нотариус <u><b>{res[1]}</b></u>\nОжидайте уведомление до <u><b>{res[0]}</b></u>\n' \
@@ -188,6 +190,13 @@ def bot_message(message):
             last_name = "!"
         else:
             last_name = message.from_user.last_name
+
+        if message.text == 'Информация о моём деле':
+            log.log_res(message)
+            sign_up_for_a_month = sql_.info(id, db)
+            mess = f'<b>{name} <u>{last_name}</u></b>\nв срок до ' \
+                   f'\nВ какую контору Вы хотите написать письмо или позвонить?'
+
 
         if message.text == 'Перейти на сайт и ознакомиться':
             log.log_res(message)

@@ -114,3 +114,22 @@ def otm(id, db):
     except db.Error as error:
 
         print("Failed to get record from MySQL table: {}".format(error))
+
+def info(id, db):
+    """ответ на запрос пользователя о предоставлении онформации по делу """
+
+    cursor = db.cursor()
+
+    try:
+
+        sql_update_query = """SELECT srok FROM personNotary WHERE id = ? """
+        cursor.execute(sql_update_query, id)
+        query_result = cursor.fetchall()
+
+
+        for user in query_result:
+            print(user)
+
+    except db.Error as error:
+
+        print("Failed to get record from MySQL table: {}".format(error))
