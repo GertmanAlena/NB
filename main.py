@@ -193,12 +193,19 @@ def bot_message(message):
 
         if message.text == 'Информация о моём деле':
             log.log_res(message)
-            sign_up_for_a_month = sql_.info(id, db)
-            mess = f'<b>{name} <u>{last_name}</u></b>\nв срок до ' \
-                   f'\nВ какую контору Вы хотите написать письмо или позвонить?'
+            sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
+            notarius = sql_.info_notarius(message.from_user.id, db)
+            zapros = sql_.info_zapros(message.from_user.id, db)
+            if zapros == None:
+                zapros = "Ответы на запросы ожидаются от организаций! Как только все запросы будут получены," \
+                         " Вам придёт уведомление от меня"
 
+            mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
+                   f'\nВам придёт уведомление о необходимости записаться к нотариусу <b>{notarius}</b>' \
+                   f'\n{zapros}💁'
+            bot.send_message(message.chat.id, mess, parse_mode="html")
 
-        if message.text == 'Перейти на сайт и ознакомиться':
+        elif message.text == 'Перейти на сайт и ознакомиться':
             log.log_res(message)
             bot.send_message(message.from_user.id,
                         'Для ознакомления с режимом работы нотариальных контор\nРежимом работы нотариусов\n'

@@ -115,20 +115,53 @@ def otm(id, db):
 
         print("Failed to get record from MySQL table: {}".format(error))
 
-def info(id, db):
+def info_srok(id, db):
     """ответ на запрос пользователя о предоставлении онформации по делу """
-
     cursor = db.cursor()
-
     try:
-
         sql_update_query = """SELECT srok FROM personNotary WHERE id = ? """
-        cursor.execute(sql_update_query, id)
+        cursor.execute(sql_update_query, (id,))
+        # cursor.execute(sql_update_query, id)
         query_result = cursor.fetchall()
+        for srok in query_result:
+            print("info ", srok)
+            return srok[0]
+    except db.Error as error:
 
+        print("Failed to get record from MySQL table: {}".format(error))
 
-        for user in query_result:
-            print(user)
+def info_notarius(id, db):
+    """ответ на запрос пользователя о предоставлении онформации по делу """
+    cursor = db.cursor()
+    try:
+        sql_update_query = """SELECT notarius FROM personNotary WHERE id = ? """
+        cursor.execute(sql_update_query, (id,))
+        query_result = cursor.fetchall()
+        for notarius in query_result:
+            if (len(query_result)) == 1:
+                return notarius[0]
+    except db.Error as error:
+
+        print("Failed to get record from MySQL table: {}".format(error))
+
+def info_zapros(id, db):
+    """ответ на запрос пользователя о предоставлении онформации по делу """
+    cursor = db.cursor()
+    try:
+        sql_update_query = """SELECT notification FROM personNotary WHERE id = ? """
+        cursor.execute(sql_update_query, (id,))
+        query_result = cursor.fetchall()
+        if query_result:
+            if (len(query_result)) == 1:
+                for notification in query_result:
+                    if notification == ("", ):
+                        print("None")
+                        return None
+                    else:
+                        print("notification", notification)
+                        notification = notification[0]
+                        return notification
+
 
     except db.Error as error:
 
