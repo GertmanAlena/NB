@@ -18,7 +18,6 @@ def notif(db):
     print("text...", text)
 
     try:
-
         sql_update_query = """Update personNotary set notification = ? where notification = ?"""
         data = (text, data_now)
         cursor.execute(sql_update_query, data)

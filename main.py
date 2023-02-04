@@ -12,7 +12,7 @@ from telebot import types
 import sql as sql_
 import threading
 import notification as n
-
+from _locale import Error
 from myTime import then
 from myTime import then2
 from myTime import then3
@@ -56,16 +56,16 @@ def do_work():
                 response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                         params=params)
         """уведомление за месяц до срока 6 месяцев"""
-        if DT.datetime.now().strftime("%H:%M") == then or DT.datetime.now().strftime("%H:%M") == then2:
+        if DT.datetime.now().strftime("%H:%M") == then:
             print("5... if == ")
-            from _locale import Error
+
             try:
                 cursor = db.cursor()
                 sql = """select * from personNotary where data_sms = ? """
 
                 cursor.execute(sql, (DT.datetime.now().strftime("%d.%m.%Y"),))
                 query_result = cursor.fetchall()
-                print(len(query_result))
+                print("строка 68 main", len(query_result))
                 if len(query_result) != 0:
                     for row in query_result:
                         print("найден пользователь", row)
@@ -83,7 +83,7 @@ def do_work():
                         sql_.otm(row[0], db)
                     time.sleep(65)
                 else:
-                    break
+                    time.sleep(30)
 
             except Error as e:
 
