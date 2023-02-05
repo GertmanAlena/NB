@@ -1,23 +1,25 @@
 import requests
+import threading
 
 import telebot
-import logger as log
+from telebot import types
 from telebot.types import InlineKeyboardButton
 
+import logger as log
+
+import datetime as DT
 import time
 import config
-import datetime as DT
+
 from data_base import dbcon
-from telebot import types
 import sql as sql_
-import threading
+
 import notification as n
 from _locale import Error
 from myTime import then
 from myTime import then3
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
-
 now_time = DT.datetime.now()
 
 print('server started')
@@ -45,6 +47,7 @@ def do_work():
                         }
                         response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                                 params=params)
+                        log.replies_received(i[2], i[3])
             except Error as e:
                 print('Error sending message', e)
                 log.log_error(e)
@@ -176,10 +179,11 @@ def bot_message(message):
             if zapros == None:
                 zapros = "Ответы на запросы ожидаются от организаций! Как только все запросы будут получены," \
                          " Вам придёт уведомление от меня"
-
+            else:
+                zapros2 = f'<b>Ответы на запросы получены, об этом Вы были </b>'
             mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
-                   f'\nВам придёт уведомление о необходимости записаться к нотариусу <b>{notarius}</b>' \
-                   f'\n{zapros}💁'
+                   f'\nВам необходимо записаться к нотариусу <b>{notarius}</b>' \
+                   f'\n{zapros2}{zapros}💁'
 
             bot.send_message(message.chat.id, mess, parse_mode="html")
             bot.send_message(message.from_user.id,

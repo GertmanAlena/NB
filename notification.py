@@ -1,9 +1,9 @@
-
 import datetime as DT
 
 now_time = DT.datetime.now()
 from aifc import Error
 import logger as log
+
 
 def notif(db):
     '''метод поиска в базе людей, которым пришли все ответы на запросы
@@ -11,7 +11,7 @@ def notif(db):
     если в БД есть запись в столбце notification, записываем text'''
 
     cursor = db.cursor()
-    t = "уведомлен "
+    t = "уведомлены "
     data_now = str(DT.datetime.now().strftime("%d.%m.%Y"))
     text = t + data_now
 
@@ -47,4 +47,3 @@ def notif(db):
 
     except Error as e:
         log.log_error(e)
-

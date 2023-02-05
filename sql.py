@@ -15,6 +15,7 @@ def create_connection_mysql_db(db):
         print("\nDatabase created successfully!!!")
     except Error as db_error:
         print("Error: %s" % db_error)
+        log.log_error_connection_mysql_db("Error: %s" % db_error)
 
     db.commit()
     cursor.close()
@@ -23,7 +24,6 @@ def create_connection_mysql_db(db):
 def create_id_2(message):
     """в ms положит введённые данные, если они введены корректно, например ['Гертман', '1523']"""
     try:
-
         ms = message.text.split(" ")
         print("ms", ms)
         return ms
@@ -86,17 +86,17 @@ def create_id_3(message, ms, db):
     cursor.close()
 def otm(id, db):
     """если в базе найден человек, которого необходимо уведомить,
-    бот уведомляет и ставит отметку "уведомлен и дата" """
+    бот уведомляет и ставит отметку "уведомлены и дата" """
 
     print("7...")
     text = "уведомлен "
     data = str(datetime.now().strftime("%d.%m.%Y"))
     data_sms = text + data
     print("data_sms ", data_sms)
-    """метод изменения ячейки"""
+
+    """изменение значения ячейки"""
 
     cursor = db.cursor()
-
     try:
 
         sql_update_query = """Update personNotary set data_sms = ? where id = ?"""
@@ -107,16 +107,15 @@ def otm(id, db):
         db.commit()
         cursor.close()
 
-        # sql = f"""UPDATE personNotary SET data_sms = {data_sms} WHERE id = ?"""
-        #
-        # cursor.execute(sql, (id,))
-        # print("изменили ...")
     except db.Error as error:
 
         print("Failed to get record from MySQL table: {}".format(error))
 
 def info_srok(id, db):
-    """ответ на запрос пользователя о предоставлении онформации по делу """
+    """
+    ответ на запрос пользователя о предоставлении онформации по делу
+    по ID находим в базе человека, берём значение "нотариус"
+    """
     cursor = db.cursor()
     try:
         sql_update_query = """SELECT srok FROM personNotary WHERE id = ? """
@@ -145,7 +144,12 @@ def info_notarius(id, db):
         print("Failed to get record from MySQL table: {}".format(error))
 
 def info_zapros(id, db):
-    """ответ на запрос пользователя о предоставлении онформации по делу """
+    """
+    ответ на запрос пользователя о предоставлении онформации по делу
+    по ID находим в базе человека
+    если ячейка пустая (ответы не пришли на запросы) - возвращаем None
+    если ячейка с отметкой, что человек уже уведомлен, берём это значение для отправки
+    """
     cursor = db.cursor()
     try:
         sql_update_query = """SELECT notification FROM personNotary WHERE id = ? """
