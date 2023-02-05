@@ -170,3 +170,38 @@ def info_zapros(id, db):
     except db.Error as error:
 
         print("Failed to get record from MySQL table: {}".format(error))
+
+def create_reg(telephon, id_tel, db):
+    cursor = db.cursor()
+    result = []
+    try:
+        sql = """select * from personNotary where telephone_number = ? """
+
+        cursor.execute(sql, (telephon,))
+        query_result = cursor.fetchall()
+        print(len(query_result))
+
+        if len(query_result) == 0:
+            return False
+        else:
+
+            for user in query_result:
+                sql = f"""UPDATE personNotary SET id = {id_tel} WHERE telephone_number = ?"""
+                cursor.execute(sql, (telephon,))
+                print(user)
+                result.append(user[2])
+                result.append(user[3])
+                result.append(user[9])
+                result.append(user[10])
+                print(result)
+                print("добавили id")
+
+                db.commit()
+
+
+            return result
+    except db.Error as error:
+        # log.log_error3(error)
+        print("Failed to get record from MySQL table: {}".format(error))
+        return None
+    cursor.close()
