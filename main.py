@@ -14,72 +14,58 @@ import threading
 import notification as n
 from _locale import Error
 from myTime import then
-from myTime import then2
 from myTime import then3
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 
 now_time = DT.datetime.now()
-# dp = Dispatcher(bot)
 
 print('server started')
 log.server_started(now_time)
 
 db = dbcon()
 sql_.create_connection_mysql_db(db)
-print("..Connect")
 log.log_Connect_sql()
 
-# stop = False
-print("1...")
-
 def do_work():
+    """метод ожидания нужного времени и даты для уведомления второй поток"""
 
     while True:
-        """метод ожидания нужного времени и даты для уведомления второй поток"""
-        print("3...")
         """уведомление, когда пришли ответы на все запросы по НД"""
+
         if DT.datetime.now().strftime("%H:%M") == then3:
-            print("4...")
-            print("then3 ", then3)
-
             res = n.notif(db)
-            print(res)
-            for i in res:
-                print("res[] ", i[2])
+            try:
+                if res != None:
+                    for i in res:
+                        params = {
+                            'chat_id': i[0],
+                            'text': f'{i[2]} {i[3]}\n\nНа все запросы по Вашему делу пришли ответы!!!'
+                                    f'\nВам необходимо записаться к нотариусу {i[10]} в срок до {i[9]}',
+                        }
+                        response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
+                                                params=params)
+            except Error as e:
+                print('Error sending message', e)
+                log.log_error(e)
 
-                params = {
-                    'chat_id': i[0],
-                    'text': f'{i[2]} {i[3]}\n\nНа все запросы по Вашему делу пришли ответы!!!'
-                            f'\nВам необходимо записаться к нотариусу {i[10]} в срок до {i[9]}',
-                }
-                response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
-                                        params=params)
         """уведомление за месяц до срока 6 месяцев"""
-        if DT.datetime.now().strftime("%H:%M") == then:
-            print("5... if == ")
 
+        if DT.datetime.now().strftime("%H:%M") == then:
             try:
                 cursor = db.cursor()
                 sql = """select * from personNotary where data_sms = ? """
 
                 cursor.execute(sql, (DT.datetime.now().strftime("%d.%m.%Y"),))
                 query_result = cursor.fetchall()
-                print("строка 68 main", len(query_result))
                 if len(query_result) != 0:
                     for row in query_result:
-                        print("найден пользователь", row)
-                        # log.query_res(row)
-                        print(row[0])
                         params = {
                             'chat_id': row[0],
                             'text': f'{row[2]} {row[3]}\n\nВам необходимо записаться к нотариусу {row[10]} в срок до {row[9]}',
                         }
                         response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                                 params=params)
-                        print("6...")
-                        print("row[0] ", row[0])
-
                         sql_.otm(row[0], db)
                     time.sleep(65)
                 else:
@@ -91,15 +77,8 @@ def do_work():
                 log.log_error(e)
 
         else:
-            print("7...")
-            print("sleep if != ")
             time.sleep(30)
-
-            print("t 2 = ", DT.datetime.now().strftime("%H:%M"))
-
-
-# threaded = threading.Thread(target=do_work).start()
-print("2...")
+            print(DT.datetime.now().strftime("%H:%M"))
 
 @bot.message_handler(commands=['start'])
 
