@@ -105,6 +105,12 @@ def log_error3(message, e):
         f'произошла ошибка при добавлении id {e}', file=botlogfile)
     botlogfile.close()
 
+def error_info(id, e):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} у пользователя c id-{id} '
+        f'произошла ошибка при запросе информации о деле {e}', file=botlogfile)
+    botlogfile.close()
 
 def person_add_bd(now_time, user_id, first_name, last_name, date, date_sms):
     botlogfile = open('loggerBot.log', 'a', encoding='utf-8')

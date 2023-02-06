@@ -111,7 +111,7 @@ def otm(id, db):
 
         print("Failed to get record from MySQL table: {}".format(error))
 
-def info_srok(id, db):
+def info_srok(id,db):
     """
     ответ на запрос пользователя о предоставлении онформации по делу
     по ID находим в базе человека, берём значение "нотариус"
@@ -126,7 +126,7 @@ def info_srok(id, db):
             print("info ", srok)
             return srok[0]
     except db.Error as error:
-
+        log.error_info(id, db.Error)
         print("Failed to get record from MySQL table: {}".format(error))
 
 def info_notarius(id, db):
@@ -140,7 +140,7 @@ def info_notarius(id, db):
             if (len(query_result)) == 1:
                 return notarius[0]
     except db.Error as error:
-
+        log.error_info(id, db.Error)
         print("Failed to get record from MySQL table: {}".format(error))
 
 def info_zapros(id, db):
@@ -166,9 +166,9 @@ def info_zapros(id, db):
                         notification = notification[0]
                         return notification
 
-
     except db.Error as error:
 
+        log.error_info(id, db.Error)
         print("Failed to get record from MySQL table: {}".format(error))
 
 def create_reg(telephon, id_tel, db):

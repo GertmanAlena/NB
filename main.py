@@ -197,7 +197,7 @@ def bot_message(message):
 
         if message.text == 'Информация о моём деле':
             log.log_res(message)
-            sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
+            sign_up_for_a_month = sql_.info_srok(message.from_user.id, message.from_user.first_name, db)
             print('sign', sign_up_for_a_month)
             notarius = sql_.info_notarius(message.from_user.id, db)
             print('notarius', notarius)
