@@ -35,6 +35,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+TODO.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -62,6 +63,7 @@ db.sqlite3
 db.sqlite3-journal
 notary.db
 .db
+loggerBot.log
 
 # Flask stuff:
 instance/
