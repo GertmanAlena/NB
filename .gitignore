@@ -161,4 +161,3 @@ cython_debug/
 config.py
 notary.db
 loggerBot.log
-TODO.txt
