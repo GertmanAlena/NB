@@ -216,14 +216,11 @@ def create_new_person(id, tel, name, l_name, db):
     :param db: даза данных
     :return:
     """
-    print(">>>1")
     cursor = db.cursor()
     try:
         sql = """INSERT INTO personNotary (id, telephone_number, first_name, last_name) VALUES (?, ?, ?, ?) """
-        print(">>>2")
         cursor.execute(sql, (id, tel, name, l_name))
         query_result = cursor.fetchall()
-        print(">>>insert into person")
         db.commit()
 
     except db.Error as error:

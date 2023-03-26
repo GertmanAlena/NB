@@ -117,8 +117,9 @@ def contact(message):
         button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
         button2 = types.KeyboardButton('Написать e-mail')
         button3 = types.KeyboardButton('Информация о моём деле')
+        button4 = types.KeyboardButton('Записаться на приём к нотариусу')
 
-        markup.add(button1, button2, button3)
+        markup.add(button1, button2, button3, button4)
         if message.from_user.first_name != None:
             name = message.from_user.first_name
         else: name = ""
@@ -137,8 +138,9 @@ def contact(message):
         button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
         button2 = types.KeyboardButton('Написать e-mail')
         button3 = types.KeyboardButton('Информация о моём деле')
+        button4 = types.KeyboardButton('Записаться на приём к нотариусу')
 
-        markup.add(button1, button2, button3)
+        markup.add(button1, button2, button3, button4)
 
         mess = f'{res[0]} {res[1]}' \
                f'\n✅Вы успешно зарегистрированы!\nВаш нотариус <u><b>{res[3]}</b></u>\nОжидайте уведомление до <u><b>{res[2]}</b></u>\n' \
@@ -179,7 +181,7 @@ def bot_message(message):
     if message.chat.type == 'private':
         name = message.from_user.first_name
         if message.from_user.last_name == None:
-            last_name = "!"
+            last_name = ""
         else:
             last_name = message.from_user.last_name
 
@@ -208,6 +210,22 @@ def bot_message(message):
                              'ОФИЦИАЛЬНОМ сайте нотариата Республики Беларусь\n'
                              '*Перейдя по ссылке*\n' + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
                              parse_mode='Markdown')
+        elif message.text == 'Записаться на приём к нотариусу':
+            print(">>>1")
+            # log.log_res(message)
+
+            mess = f'<b>{name} <u>{last_name}</u>\n\nчто Вы хотите оформить у нотариуса?</b>📄'
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            button1 = types.KeyboardButton('✔️Доверенность')
+            button2 = types.KeyboardButton('✔️Завещание')
+            button3 = types.KeyboardButton('✔️Согласие')
+            button4 = types.KeyboardButton('✔️Заявление')
+            button5 = types.KeyboardButton('✔️Консультация')
+            button6 = types.KeyboardButton('✔️др')
+            back = types.KeyboardButton('Назад')
+
+            markup.add(button1, button2, button3, button4, button5, button6, back)
+            bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
 
         elif message.text == 'Перейти на сайт и ознакомиться':
             log.log_res(message)
