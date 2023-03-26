@@ -92,64 +92,45 @@ def start(message):
         last_name = message.from_user.last_name
 
     mess = f'<b>Здравствуйте, {name} {last_name}</b>' \
-           f'\n\nВас приветствует бот Нотариальной конторы Оршанского района и города Орши\n' \
+           f'\n\nВас приветствует <b>Telegram Bot</b> Нотариальной конторы Оршанского района и города Орши\n\n' \
            f'Для дальнейшего уведомления ВАС по Вашему наследственному делу' \
-           f'\nподтвердите пожалуйста свои данные, нажав кнопку \n\n<b><u> 👇 ПРОДОЛЖИТЬ 👇 </u></b>'
+           f'\nподтвердите пожалуйста свои данные, нажав кнопку ниже \n\n'
 
 
     bot.send_photo(message.chat.id, photo)
     markup = types.ReplyKeyboardMarkup(row_width=1)
 
-    tel = types.KeyboardButton(" ПРОДОЛЖИТЬ ", request_contact=True)
+    tel = types.KeyboardButton(" ПРОДОЛЖИТЬ \n и поделиться контактом", request_contact=True)
     markup.add(tel)
-    bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
 
-# def create_id(message):
-#     """метод принимает введённые пользователем фамилию и последние 4 цифры телефона(ms) и присваивает переменным
-#     l_name - имя
-#     tel - телефон
-#     если в таблице находит такого человека, то добавляеь id
-#     и возвращает res [со значением срока = 6 месяцев, фамилией нотариуса]
-#     если не нашёл, то возвращает None"""
-#
-#     mess_except = f'❌oooops, попробуйте ещё раз\n\nвведите внимательно' \
-#            f'<b><u>{"ВАШУ ФАМИЛИЮ И ПОСЛЕДНИЕ 4 ЦИФРЫ МОБИЛЬНОГО ТЕЛЕФОНА через пробел"}</u>\n{"Например: Иванов 1234"}</b>'
-#
-#     ms = sql_.create_id_2(message)
-#     if ms == 0:
-#         bot.reply_to(message, mess_except, parse_mode="html")
-#     else:
-#
-#         res = sql_.create_id_3(message, ms, db)
-#         print("res ", res)
-#         if res == None:
-#             bot.reply_to(message, mess_except, parse_mode="html")
-#         else:
-#             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-#
-#             button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-#             button2 = types.KeyboardButton('Написать e-mail')
-#             button3 = types.KeyboardButton('Информация о моём деле')
-#
-#             markup.add(button1, button2, button3)
-#
-#             mess = f'{message.from_user.first_name} {message.from_user.last_name}' \
-#                    f'\n✅Вы успешно зарегистрированы!\nВаш нотариус <u><b>{res[1]}</b></u>\nОжидайте уведомление до <u><b>{res[0]}</b></u>\n' \
-#                    f'\nТак же вы можете найти полезную информацию на официальном сайте БНП\nи ' \
-#                    f'там ознакомиться с режимами работы нотариальных контор и нотариусов'
-#             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+    bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
 
 @bot.message_handler(content_types=["contact"])
 def contact(message):
-    # global telefon
     telephon = message.contact.phone_number
     id_tel = message.chat.id
     res = sql_.create_reg(telephon, id_tel, db)
     if res == False:
+        sql_.create_new_person(id_tel, telephon, message.from_user.first_name, message.from_user.last_name, db)
 
-        mess_except = f'❌Извините, вы не найдены в базе данных\n\n' \
-                       f'<b><u>{"Наберите подалуйста по номеру телефона 📞..."}</u></b>'
-        bot.send_message(message.chat.id, mess_except, parse_mode="html")
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+        button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
+        button2 = types.KeyboardButton('Написать e-mail')
+        button3 = types.KeyboardButton('Информация о моём деле')
+
+        markup.add(button1, button2, button3)
+        if message.from_user.first_name != None:
+            name = message.from_user.first_name
+        else: name = ""
+        if message.from_user.last_name != None:
+            last_name = message.from_user.last_name
+        else: last_name = ""
+        mess = f'{name} {last_name}' \
+               f'\n✅Вы успешно зарегистрированы!\n'
+        bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+        # mess_except = f'❌Извините, вы не найдены в базе данных Нотариальной конторы\n\n' \
+        #                f'<b><u>{"Наберите подалуйста по номеру телефона 📞..."}</u></b>'
+        # bot.send_message(message.chat.id, mess_except, parse_mode="html")
     else:
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
@@ -187,7 +168,14 @@ def send_sticker(message):
 
 
 @bot.message_handler(content_types=['text'])
+
 def bot_message(message):
+    """
+
+    :param message:
+    :return:
+    sign_up_for_a_month срок извещения
+    """
     if message.chat.type == 'private':
         name = message.from_user.first_name
         if message.from_user.last_name == None:
@@ -197,7 +185,7 @@ def bot_message(message):
 
         if message.text == 'Информация о моём деле':
             log.log_res(message)
-            sign_up_for_a_month = sql_.info_srok(message.from_user.id, message.from_user.first_name, db)
+            sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
             print('sign', sign_up_for_a_month)
             notarius = sql_.info_notarius(message.from_user.id, db)
             print('notarius', notarius)

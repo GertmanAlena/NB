@@ -21,69 +21,69 @@ def create_connection_mysql_db(db):
     cursor.close()
 
 
-def create_id_2(message):
-    """в ms положит введённые данные, если они введены корректно, например ['Гертман', '1523']"""
-    try:
-        ms = message.text.split(" ")
-        print("ms", ms)
-        return ms
-    except Exception as e:
-        log.log_error2(message, e)
-        print("Error: " + str(e))
-        return 0
-    cursor.close()
-def create_id_3(message, ms, db):
-    """в res из ['Гертман', '1523'] возмет первый индекс и присвоит к фамилии, второй индекс к телефону
-    и в таблице найдёт совпадения и нужному человеку присвоит id"""
-
-    cursor = db.cursor()
-    res = []
-    try:
-        if ms[0].isdigit():
-            l_name = ms[1]
-            tel = int(ms[0])
-        else:
-            l_name = ms[0]
-            tel = int(ms[1])
-        print(l_name, tel)
-        log.person_in_db(message, l_name, tel)
-
-    except Exception as e:
-        log.log_error2(message, e)
-        print("Error: " + str(e))
-
-        return None
-
-    try:
-        sql = """select * from personNotary where last_name = ? """
-
-        cursor.execute(sql, (l_name,))
-        query_result = cursor.fetchall()
-        print(len(query_result))
-
-        for user in query_result:
-            print("user:", user)
-            t = user[1] % 10000
-            print("tel:", tel)
-            print("t:", t)
-            count = 0
-            if t == tel:
-                count += 1
-                id = int(message.chat.id)
-                print("id", id)
-                if count == 1:
-                    sql = f"""UPDATE personNotary SET id = {id} WHERE telephone_number = ?"""
-                    cursor.execute(sql, (user[1],))
-                    print("добавили id")
-                    db.commit()
-                    res.append(user[8])
-                    res.append(user[10])
-                    return res
-    except db.Error as error:
-        log.log_error3(message, error)
-        print("Failed to get record from MySQL table: {}".format(error))
-        return None
-    cursor.close()
+# def create_id_2(message):
+#     """в ms положит введённые данные, если они введены корректно, например ['Гертман', '1523']"""
+#     try:
+#         ms = message.text.split(" ")
+#         print("ms", ms)
+#         return ms
+#     except Exception as e:
+#         log.log_error2(message, e)
+#         print("Error: " + str(e))
+#         return 0
+#     cursor.close()
+# def create_id_3(message, ms, db):
+#     """в res из ['Гертман', '1523'] возмет первый индекс и присвоит к фамилии, второй индекс к телефону
+#     и в таблице найдёт совпадения и нужному человеку присвоит id"""
+#
+#     cursor = db.cursor()
+#     res = []
+#     try:
+#         if ms[0].isdigit():
+#             l_name = ms[1]
+#             tel = int(ms[0])
+#         else:
+#             l_name = ms[0]
+#             tel = int(ms[1])
+#         print(l_name, tel)
+#         log.person_in_db(message, l_name, tel)
+#
+#     except Exception as e:
+#         log.log_error2(message, e)
+#         print("Error: " + str(e))
+#
+#         return None
+#
+#     try:
+#         sql = """select * from personNotary where last_name = ? """
+#
+#         cursor.execute(sql, (l_name,))
+#         query_result = cursor.fetchall()
+#         print(len(query_result))
+#
+#         for user in query_result:
+#             print("user:", user)
+#             t = user[1] % 10000
+#             print("tel:", tel)
+#             print("t:", t)
+#             count = 0
+#             if t == tel:
+#                 count += 1
+#                 id = int(message.chat.id)
+#                 print("id", id)
+#                 if count == 1:
+#                     sql = f"""UPDATE personNotary SET id = {id} WHERE telephone_number = ?"""
+#                     cursor.execute(sql, (user[1],))
+#                     print("добавили id")
+#                     db.commit()
+#                     res.append(user[8])
+#                     res.append(user[10])
+#                     return res
+#     except db.Error as error:
+#         log.log_error3(message, error)
+#         print("Failed to get record from MySQL table: {}".format(error))
+#         return None
+#     cursor.close()
 def otm(id, db):
     """если в базе найден человек, которого необходимо уведомить,
     бот уведомляет и ставит отметку "уведомлены и дата" """
@@ -111,7 +111,7 @@ def otm(id, db):
 
         print("Failed to get record from MySQL table: {}".format(error))
 
-def info_srok(id,db):
+def info_srok(id, db):
     """
     ответ на запрос пользователя о предоставлении онформации по делу
     по ID находим в базе человека, берём значение "нотариус"
@@ -204,4 +204,30 @@ def create_reg(telephon, id_tel, db):
         # log.log_error3(error)
         print("Failed to get record from MySQL table: {}".format(error))
         return None
+    cursor.close()
+
+def create_new_person(id, tel, name, l_name, db):
+    """
+    метод регистрации человека, добавившегося в бота не по наследственному делу
+    :param id: идентификационный номер человека
+    :param tel: номер телефона
+    :param name: имя
+    :param l_name: фамилия
+    :param db: даза данных
+    :return:
+    """
+    print(">>>1")
+    cursor = db.cursor()
+    try:
+        sql = """INSERT INTO personNotary (id, telephone_number, first_name, last_name) VALUES (?, ?, ?, ?) """
+        print(">>>2")
+        cursor.execute(sql, (id, tel, name, l_name))
+        query_result = cursor.fetchall()
+        print(">>>insert into person")
+        db.commit()
+
+    except db.Error as error:
+        # log.log_error3(error)
+        print("Failed to get record from MySQL table: {}".format(error))
+
     cursor.close()
