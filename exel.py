@@ -1,10 +1,11 @@
 import os
-import pandas as pd
-from openpyxl import load_workbook
+
+import openpyxl
+
 
 # Retrieve current working directory (`cwd`) Получить текущий рабочий каталог
-cwd = os.getcwd()
-cwd
+# cwd = os.getcwd()
+# cwd
 def x_file(d, notarius):
 
     sheet = activ_list(notarius, d) # получаем нужный акривный лист нужного нотариуса
@@ -36,71 +37,83 @@ def data_z(sheet, max_rows, max_cols, d):
 
 def zapis_not(time, notarius, day):
     print(time, notarius, day)
+    # val = "записали"
 
-    sheet = activ_list(notarius, day)
+    if notarius == "Гоголь":
+        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+        worksheet = wb.active
+        print("worksheet ", worksheet)
+        save_file(wb, worksheet, notarius, time, day)
+        wb.save('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+    elif notarius == "Сойка":
+        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
+        worksheet = wb.active
+        print("worksheet ", worksheet)
+        save_file(wb, worksheet, notarius, time, day)
+        wb.save('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
+    # max_rows = worksheet.max_row
+    # max_cols = worksheet.max_column
+    # print("max_rows ", max_rows, "max_cols ", max_cols)
+    # for i in range(1, max_cols + 1):
+    #     if worksheet.cell(row=1, column=i).value != None and day == worksheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
+    #         print("day", day)
+    #         for j in range(2, max_rows + 1):
+    #             if worksheet.cell(row=j, column=1).value != None and time == worksheet.cell(row=j, column=1).value.strftime("%H:%M"):
+    #                 print(">>>><<<<<", worksheet.cell(row=j, column=i).value)
+    #                 # worksheet.cell(row=j, column=i).value = val
+    #                 worksheet.cell(row=j, column=i).value = val
+    #
+    #                 print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
 
-    max_rows = sheet.max_row
-    max_cols = sheet.max_column
-    print("max_rows ", max_rows, "max_cols ", max_cols)
-    for i in range(1, max_cols + 1):
-        if sheet.cell(row=1, column=i).value != None and day == sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
-            print("day", day)
-            for j in range(2, max_rows + 1):
-                if sheet.cell(row=j, column=1).value != None and time == sheet.cell(row=j, column=1).value.strftime("%H:%M"):
-                    print(">>>><<<<<", sheet.cell(row=j, column=i).value)
-                    d = sheet.cell(row=j, column=i, value=10)
-                    d.value = "pfg"
-                    print("d.value ", d.value)
-
-    # print(">>>><<<<<", sheet.Cells().get(time).putValue(day))
+    # wb.save('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
 
 
 def activ_list(notarius, day):
     month = day.split('.')[1]
 
     if notarius == 'Гоголь':
-        wb = load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+        # wb = load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
         if month == "01":
-            sheet = wb.get_sheet_by_name('Январь')
-            print(sheet)
+            worksheet = wb.get_sheet_by_name('Январь')
+            print(worksheet)
         elif month == "02":
             sheet = wb.get_sheet_by_name('Февраль')
             print(sheet)
         elif month == "03":
-
-            sheet = wb.get_sheet_by_name('Март')  # sheet это лист Марта
-            return sheet
+            # worksheet = wb.get_sheet_by_name('Март')  # worksheet это лист Марта
+            worksheet = wb['Март']
+            print("worksheet ", worksheet)
+        return worksheet
     elif notarius == 'Сойка':
-        wb = load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
-        print(">>>", wb.get_sheet_names())
+        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
         if month == "01":
-            sheet = wb.get_sheet_by_name('Январь')
-            print(sheet)
+            worksheet = wb.get_sheet_by_name('Январь')
+            print(worksheet)
         elif month == "02":
             sheet = wb.get_sheet_by_name('Февраль')
             print(sheet)
         elif month == "03":
-            sheet = wb.get_sheet_by_name('Март')
-            print(">>> ", sheet)
+            # worksheet = wb.get_sheet_by_name('Март')  # worksheet это лист Марта
+            worksheet = wb['Март']
+            print("worksheet ", worksheet)
+        return worksheet
+def save_file(wb, worksheet, notarius, time, day):
+    val = "записали"
+    max_rows = worksheet.max_row
+    max_cols = worksheet.max_column
+    print("max_rows ", max_rows, "max_cols ", max_cols)
+    for i in range(1, max_cols + 1):
+        if worksheet.cell(row=1, column=i).value != None and day == worksheet.cell(row=1, column=i).value.strftime(
+                "%d.%m.%Y"):
+            print("day", day)
+            for j in range(2, max_rows + 1):
+                if worksheet.cell(row=j, column=1).value != None and time == worksheet.cell(row=j,
+                                                                                            column=1).value.strftime(
+                        "%H:%M"):
+                    print(">>>><<<<<", worksheet.cell(row=j, column=i).value)
+                    # worksheet.cell(row=j, column=i).value = val
+                    worksheet.cell(row=j, column=i).value = val
 
-
-
-        # # Загружаем ваш файл в переменную `file` / вместо 'example' укажите название свого файла из текущей директории
-    # file = 'Gogol.xlsx'
-
-    # # Загружаем spreadsheet в объект pandas
-    # xl = pd.ExcelFile(file)
-    #
-    # # Печатаем название листов в данном файле
-    # print(xl.sheet_names)
-
-    # Загрузить лист в DataFrame по его имени: df1
-    # df1 = xl.parse('Март')
-    # print(df1)
-
-    # Change directory  Изменить каталог
-    # os.chdir("D:/studies/BotNotaryMy/Notarius")
-
-    # List all files and directories in current directory  Список всех файлов и каталогов в текущем каталоге
-    # os.listdir('.')
-    # print(os.listdir('.'))
+                    print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
+                    return
