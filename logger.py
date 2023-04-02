@@ -133,3 +133,8 @@ def log_last_name_none(message, now_time):
           'у пользователя c id ' + {message.from_user.id} + 'фамилия не известна, поэтому занесено имя None',
           file=botlogfile)
     botlogfile.close()
+
+def activ_list(e, notarius, day):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(f'произошла ошибка при активации листа {notarius} {day} {e}', file=botlogfile)
+    botlogfile.close()
