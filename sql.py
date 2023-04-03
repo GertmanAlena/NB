@@ -172,6 +172,13 @@ def info_zapros(id, db):
         print("Failed to get record from MySQL table: {}".format(error))
 
 def create_reg(telephon, id_tel, db):
+    """
+    поиск по номеру телефона человека, если не нашёл, возвращает False
+    :param telephon:
+    :param id_tel:
+    :param db:
+    :return: False или result
+    """
     cursor = db.cursor()
     result = []
     try:
@@ -228,3 +235,20 @@ def create_new_person(id, tel, name, l_name, db):
         print("Failed to get record from MySQL table: {}".format(error))
 
     cursor.close()
+
+def info_id(id, db):
+    """
+    поиск телефона по id для записи
+    """
+    cursor = db.cursor()
+    try:
+        sql_update_query = """SELECT telephone_number FROM personNotary WHERE id = ? """
+        cursor.execute(sql_update_query, (id,))
+        # cursor.execute(sql_update_query, id)
+        query_result = cursor.fetchall()
+        for tel in query_result:
+            print("tel ", tel[0])
+            return tel[0]
+    except db.Error as error:
+        log.error_info(id, db.Error)
+        print("Failed to get record from MySQL table: {}".format(error))

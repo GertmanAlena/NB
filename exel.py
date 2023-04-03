@@ -40,7 +40,7 @@ def data_z(sheet, max_rows, max_cols, d):
     print("free_time ", free_time)
     return free_time
 
-def zapis_not(time, notarius, day, power_of_attorney, name, last_name):
+def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
     """
     метод записи в xlsx выбирает нужную диреторию по нотариусу и задаёт активный лист
     передает директорию, активный лист, нотариуса, время и дату в метод записи и сохранения файла save_file
@@ -50,72 +50,76 @@ def zapis_not(time, notarius, day, power_of_attorney, name, last_name):
     :return:
     """
     print("in zapis_not")
-    if notarius == "Гоголь":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
-        worksheet = wb.active
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
-    elif notarius == "Сойка":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
-    elif notarius == "Думанова":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
-    elif notarius == "Ковалевская":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
-    elif notarius == "Сильченко":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
-    elif notarius == "Бондаренко":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
-    elif notarius == "Чикан":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
-    elif notarius == "Котикова":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
-    elif notarius == "Шинкевич":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
-    elif notarius == "Позднякова":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
-    elif notarius == "Демидова":
-        wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
-        worksheet = wb.active
-        print("worksheet ", worksheet)
-        save_file(worksheet, time, day, power_of_attorney, name, last_name)
-        wb.save('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
-    return True
+    try:
+        if notarius == "Гоголь":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+            worksheet = wb.active
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+        elif notarius == "Сойка":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
+        elif notarius == "Думанова":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
+        elif notarius == "Ковалевская":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
+        elif notarius == "Сильченко":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
+        elif notarius == "Бондаренко":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
+        elif notarius == "Чикан":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
+        elif notarius == "Котикова":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
+        elif notarius == "Шинкевич":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
+        elif notarius == "Позднякова":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
+        elif notarius == "Демидова":
+            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
+            worksheet = wb.active
+            print("worksheet ", worksheet)
+            save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
+            wb.save('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
+        return True
+    except Exception as e:
+        log.log_zapis_not(e, notarius)
+        return False
 
 def activ_list(notarius, day):
     month = day.split('.')[1]
@@ -183,7 +187,7 @@ def activ_list(notarius, day):
         log.activ_list(e, notarius, day)
         return False
 
-def save_file(worksheet, time, day, power_of_attorney, name, last_name):
+def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
     print("save_file")
     """
     метод записи и сохранения
@@ -196,7 +200,10 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name):
     """
     val = power_of_attorney
     print("val ", val)
-    res = val + " " + name + " " + last_name
+    print("name ", name)
+    print("last_name ", last_name)
+    print("tel ", tel)
+    res = str(val) + " " + str(name) + " " + str(last_name) + " " + str(tel)
     print("res ", res)
     max_rows = worksheet.max_row
     max_cols = worksheet.max_column
@@ -215,4 +222,5 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name):
                         print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
                         return True
     except Exception as e:
+        print(e)
         return False

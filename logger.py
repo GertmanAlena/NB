@@ -138,3 +138,7 @@ def activ_list(e, notarius, day):
     botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
     print(f'произошла ошибка при активации листа {notarius} {day} {e}', file=botlogfile)
     botlogfile.close()
+def log_zapis_not(e, notarius):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(f'произошла ошибка в zapis_not {e} {notarius} ', file=botlogfile)
+    botlogfile.close()
