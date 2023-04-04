@@ -18,6 +18,8 @@ from myTime import then3
 from exel import x_file
 from exel import zapis_not
 import case as C
+import text_messages as tm
+import button_file as bf
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
@@ -31,8 +33,6 @@ log.log_Connect_sql()
 
 calendar = Calendar(language=RUSSIAN_LANGUAGE)
 calendar_1 = CallbackData('calendar_1', 'action', 'year', 'month', 'day')
-global markup_all
-
 
 def do_work():
     """метод ожидания нужного времени и даты для уведомления второй поток"""
@@ -100,10 +100,8 @@ def start(message):
     else:
         last_name = message.from_user.last_name
 
-    mess = f'<b>Здравствуйте, {name} {last_name}</b>' \
-           f'\n\nВас приветствует <b>Telegram Bot</b> Нотариальной конторы Оршанского района и г.Орши\n\n' \
-           f'Для дальнейшего уведомления ВАС по Вашему наследственному делу' \
-           f'\nподтвердите пожалуйста свои данные, нажав кнопку ниже \n\n'
+    mess = f'<b>Здравствуйте, {name} {last_name}</b>' + tm.text_start()
+
 
     bot.send_photo(message.chat.id, photo)
     markup = types.ReplyKeyboardMarkup(row_width=1)
@@ -137,8 +135,7 @@ def contact(message):
             last_name = message.from_user.last_name
         else:
             last_name = ""
-        mess = f'{name} {last_name}' \
-               f'\n✅Вы успешно зарегистрированы!\n'
+        mess = f'{name} {last_name}' + tm.reg_ok()
         bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
     else:
         if res[3] is None:
@@ -148,10 +145,7 @@ def contact(message):
             button3 = types.KeyboardButton('Информация о моём деле')
             button4 = types.KeyboardButton('Записаться на приём к нотариусу')
             markup.add(button1, button2, button3, button4)
-            mess = f'{res[0]} {res[1]}' \
-                   f'\n✅Вы успешно зарегистрированы!\nВы можете найти полезную информацию на официальном сайте БНП\nи ' \
-                   f'там ознакомиться с режимами работы нотариальных контор и нотариусов.' \
-                   f'Также Вы можете записаться к нотариусу'
+            mess = f'<b>{res[0]} {res[1]}</b>' + tm.reg_ok() + tm.reg_ok2()
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
         else:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
@@ -162,13 +156,10 @@ def contact(message):
 
             markup.add(button1, button2, button3, button4)
 
-            mess = f'{res[0]} {res[1]}' \
-                   f'\n✅Вы успешно зарегистрированы!\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
-                   f'Ожидайте уведомление до <u><b>{res[2]}</b></u>\n' \
-                   f'\nТак же вы можете найти полезную информацию на официальном сайте БНП\nи ' \
-                   f'там ознакомиться с режимами работы нотариальных контор и нотариусов'
+            mess = f'{res[0]} {res[1]} \n{tm.reg_ok()}' \
+                   f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
+                   f'Ожидайте уведомление до <u><b>{res[2]}</b></u>\n{tm.reg_ok2()}'
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
-
 
 @bot.message_handler(commands=['help'])
 def help_command(message):
@@ -317,15 +308,10 @@ def bot_message(message):
             # log.log_res(message)
             mess = f'<b>{name} <u>{last_name}</u>\n\nчто Вы хотите оформить у нотариуса?</b>📄'
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            button1 = types.KeyboardButton('✔️Доверенность')
-            button2 = types.KeyboardButton('✔️Завещание')
-            button3 = types.KeyboardButton('✔️Согласие')
-            button4 = types.KeyboardButton('✔️Заявление')
-            button5 = types.KeyboardButton('✔️Консультация')
-            button6 = types.KeyboardButton('✔️иное действие')
-            back = types.KeyboardButton('Назад')
 
-            markup.add(button1, button2, button3, button4, button5, button6, back)
+            markup.add(bf.button_power_of_attorney, bf.button_will, bf.button_agreement, bf.button_statement,
+                       bf.button_consultation, bf.button_other_action, bf.back)
+
             bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
         elif message.text == '✔️Доверенность':
             print(">>>1")
@@ -386,12 +372,7 @@ def bot_message(message):
                    f'Вам перечня документов либо уточнить информацию по телефону 📞 +375 216 56-88-94'
             markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
-            button1 = types.KeyboardButton('Информация о моём деле')
-            button2 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-            button3 = types.KeyboardButton('Написать e-mail')
-            button4 = types.KeyboardButton('Записаться на приём к нотариусу')
-
-            markup_all.add(button1, button2, button3, button4)
+            markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry, bf.back)
             bot.send_message(message.chat.id, mess, reply_markup=markup_all, parse_mode="html")
         else:
             mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
@@ -613,8 +594,9 @@ def callback_inline(call: types.CallbackQuery):
         bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
 
     elif action == 'CANCEL':
+        markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+        markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry)
         bot.send_message(chat_id=call.from_user.id, text='Отмена', reply_markup=markup_all)
-
 
 if __name__ == '__main__':
     threaded = threading.Thread(target=do_work, daemon=True).start()
