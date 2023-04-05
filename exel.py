@@ -1,5 +1,6 @@
 import openpyxl
 import logger as log
+from openpyxl.comments import Comment
 def x_file(d, notarius):
     """
     метод выбора свободного времени для записи
@@ -116,6 +117,7 @@ def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
             print("worksheet ", worksheet)
             save_file(worksheet, time, day, power_of_attorney, name, last_name, tel)
             wb.save('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
+
         return True
     except Exception as e:
         log.log_zapis_not(e, notarius)
@@ -198,12 +200,8 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
     :param day: день для записи
     :return:
     """
-    val = power_of_attorney
-    print("val ", val)
-    print("name ", name)
-    print("last_name ", last_name)
-    print("tel ", tel)
-    res = str(val) + " " + str(name) + " " + str(last_name) + " " + str(tel)
+
+    res = str(name) + " " + str(last_name) + " " + str(tel)
     print("res ", res)
     max_rows = worksheet.max_row
     max_cols = worksheet.max_column
@@ -217,7 +215,10 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
                                                                                                 column=1).value.strftime(
                             "%H:%M"):
                         print(">>>><<<<<", worksheet.cell(row=j, column=i).value)
-                        worksheet.cell(row=j, column=i).value = res
+                        worksheet.cell(row=j, column=i).value = power_of_attorney
+
+                        comment = Comment(text=res, author='Tori Code')
+                        worksheet.cell(row=j, column=i).comment = comment
 
                         print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
                         return True

@@ -4,7 +4,6 @@ import telebot
 from telebot import types
 from telebot.types import InlineKeyboardButton
 from telebot_calendar import Calendar, CallbackData, RUSSIAN_LANGUAGE
-
 import logger as log
 import datetime as DT
 import time
@@ -82,11 +81,7 @@ def do_work():
         else:
             time.sleep(30)
             print(DT.datetime.now().strftime("%H:%M"))
-
-
 print("...2...")
-
-
 @bot.message_handler(commands=['start'])
 def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
@@ -465,6 +460,19 @@ def notarius_time(message, d, power_of_attorney):
                 name=calendar_1.prefix,
                 year=now_time.year,
                 month=now_time.month), parse_mode="html")
+        elif len(free_time) == 1:
+            mess = bot.send_message(message.from_user.id,
+                                    text=f'<b>{name} <u>{last_name}</u>\n\n️'
+                                         f'У нотариуса {C.notarius_name(notarius)}</b>\n'
+                                         f'{d} ‼ нет свободного времени для записи ‼\n️'
+                                         f'\nпопробуйте выбрать другую дату',
+                                    parse_mode="html")
+            mess2 = f'\n<b>{name} <u>{last_name}</u>\n\nНа какую дату Вы хотите записаться,' \
+                    f' чтобы оформить {power_of_attorney} ??🗓️</b>'
+            bot.send_message(message.chat.id, mess2, reply_markup=calendar.create_calendar(
+                name=calendar_1.prefix,
+                year=now_time.year,
+                month=now_time.month), parse_mode="html")
         elif notarius == '':
             mess = f'\n<b>{name} <u>{last_name}</u>\n\nВы ввели что-то не так, попробуйте снова</b>'
             markup_exception = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -518,7 +526,9 @@ def zapis(message, notarius, d, notarial_document):
             last_name = message.from_user.last_name
     if message.text == "start":
         start(message)
-    if message.text != "start":
+    elif message.text == "Назад":
+        bot_message(message)
+    elif message.text != "start":
         if message.text == "08:00":
             time_records = message.text
         elif message.text == "09:00":
@@ -546,6 +556,9 @@ def zapis(message, notarius, d, notarial_document):
         tel = sql_.info_id(id_tel, db)
         print("+++++tel ", tel)
         bol = zapis_not(time_records, notarius, d, notarial_document, name, last_name, tel)
+
+        print(">>>> bol 563", bol)
+
         if bol:
             mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {C.notarius_name(notarius)} \n{d} в {time_records}</b>' \
                    f'\n{C.documents(notarial_document)}'
@@ -586,12 +599,27 @@ def callback_inline(call: types.CallbackQuery):
                button7, button8, button9, button10, button11, back)
 
     if action == 'DAY':
-        message_day = bot.send_message(chat_id=call.from_user.id, text=f'Вы выбрали <b>{date.strftime("%d.%m.%Y")}</b> '
-                                                                       f'\n<u>УКАЖИТЕ</u> к какому нотариусу вы хотите '
-                                                                       f'записаться?',
-                                       reply_markup=markup, parse_mode="html")
         d = date.strftime("%d.%m.%Y")
-        bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
+
+        if d.split(".")[2] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                d.split(".")[1] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[1] and \
+                d.split(".")[0] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[0]:
+            message_day = bot.send_message(chat_id=call.from_user.id,
+                                           text=f'Вы выбрали <b>{date.strftime("%d.%m.%Y")}</b> '
+                                                f'\n<u>УКАЖИТЕ</u> к какому нотариусу вы хотите '
+                                                f'записаться?',
+                                           reply_markup=markup, parse_mode="html")
+            bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
+        else:
+
+            # message_day = bot.send_message(chat_id=call.from_user.id, text=f'<b>Вы выбрали прошедшую дату</b> '
+            #                                                                f'‼ <u>{tm.again()}</u> ‼ ',
+            #                                reply_markup=markup, parse_mode="html")
+            bot.send_message(chat_id=call.from_user.id, text=f'<b>Вы выбрали прошедшую дату</b> '
+                                                                           f'‼ <u>{tm.again()}</u> ‼ ', reply_markup=calendar.create_calendar(
+                name=calendar_1.prefix,
+                year=now_time.year,
+                month=now_time.month), parse_mode="html")
 
     elif action == 'CANCEL':
         markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
