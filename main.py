@@ -19,11 +19,12 @@ from exel import zapis_not
 import case as C
 import text_messages as tm
 import button_file as bf
-
+import exel as ex
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
 
 print('server started')
+ex.search(123)
 log.server_started(now_time)
 
 db = dbcon()

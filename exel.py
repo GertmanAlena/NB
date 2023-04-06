@@ -1,6 +1,10 @@
+import os
+from pathlib import Path
 import openpyxl
 import logger as log
 from openpyxl.comments import Comment
+import name_file as nf
+
 def x_file(d, notarius):
     """
     метод выбора свободного времени для записи
@@ -126,28 +130,32 @@ def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
 def activ_list(notarius, day):
     month = day.split('.')[1]
     try:
-        if notarius == 'Гоголь':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
-        elif notarius == 'Сойка':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
-        elif notarius == 'Демидова':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
-        elif notarius == 'Думанова':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
-        elif notarius == 'Ковалевская':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
-        elif notarius == 'Сильченко':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
-        elif notarius == 'Бондаренко':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
-        elif notarius == 'Чикан':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
-        elif notarius == 'Котикова':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
-        elif notarius == 'Шинкевич':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
-        elif notarius == 'Позднякова':
-            wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
+        wb = openpyxl.load_workbook(nf.search_file(notarius))
+
+
+        # if notarius == 'Гоголь':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Gogol.xlsx')
+        # elif notarius == 'Сойка':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Soyka.xlsx')
+        # elif notarius == 'Демидова':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Demidova.xlsx')
+        # elif notarius == 'Думанова':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx')
+        # elif notarius == 'Ковалевская':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx')
+        # elif notarius == 'Сильченко':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx')
+        # elif notarius == 'Бондаренко':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx')
+        # elif notarius == 'Чикан':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Chikan.xlsx')
+        # elif notarius == 'Котикова':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Koticova.xlsx')
+        # elif notarius == 'Шинкевич':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx')
+        # elif notarius == 'Позднякова':
+        #     wb = openpyxl.load_workbook('D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx')
+
         if month == "01":
             worksheet = wb['Январь']
             print(worksheet)
@@ -207,9 +215,11 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
     max_cols = worksheet.max_column
     try:
         for i in range(1, max_cols + 1):
+            # ищем нужную дату в строке дат
             if worksheet.cell(row=1, column=i).value != None and day == worksheet.cell(row=1, column=i).value.strftime(
                     "%d.%m.%Y"):
                 print("day", day)
+                # нашли дату ищем нужную ячейку по времени в столбце с датой
                 for j in range(2, max_rows + 1):
                     if worksheet.cell(row=j, column=1).value != None and time == worksheet.cell(row=j,
                                                                                                 column=1).value.strftime(
@@ -222,6 +232,73 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
 
                         print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
                         return True
+    except Exception as e:
+        print(e)
+        return False
+def search_month(l):
+    if l == 1:
+        return 'Январь'
+    elif l == 2:
+        return 'Февраль'
+    elif l == 3:
+        return 'Март'
+    elif l == 4:
+        return 'Апрель'
+    elif l == 5:
+        return 'Май'
+    elif l == 6:
+        return 'Июнь'
+    elif l == 7:
+        return 'Июль'
+    elif l == 8:
+        return 'Август'
+    elif l == 9:
+        return 'Сентябрь'
+    elif l == 10:
+        return 'Октябрь'
+    elif l == 11:
+        return 'Ноябрь'
+    elif l == 12:
+        return 'Декабрь'
+def search(telephone):
+    """
+    метод поиска записи
+    :param telephone: принимает номер телефона гражданина по которому будет искать куда он записан
+    :return: дату время и к какому нотариусу записан гражданин
+    """
+    result_zapis = []
+    directory = nf.directory
+    pathlist = Path(directory).glob('*.xlsx')
+    result = ''
+    try:
+        for path in pathlist:       # перебираем файлы в директории
+            wb = openpyxl.load_workbook(path)           # открываем файлы в директории поочерёдно
+            for l in range(1, 13):          # проходим по листам в файле
+                mes = search_month(l)
+                worksheet = wb[search_month(l)]
+                max_rows = worksheet.max_row
+                max_cols = worksheet.max_column
+                for i in range(1, max_rows + 1):            # по строкам
+                    for j in range(1, max_cols + 1):            # по столбцам
+                        if worksheet.cell(row=i, column=j).comment:         # если комментарий есть
+                            com = worksheet.cell(row=i, column=j).comment
+                            result = str(com).split("\n")[1]
+                            tel = ""
+                            for k in range(0, len(result)):
+                                print("k ", result[k])
+                                if result[k].isnumeric():
+                                    tel += result[k]
+                            print("tel ", tel)
+                        if result == str(telephone):
+                            n = path
+                            notar = nf.notar_file(n)
+                            time_zapis = str(worksheet.cell(row=i, column=1).value)
+                            data_zapis = str(worksheet.cell(row=1, column=j).value.strftime("%d.%m.%Y"))
+                            result_zapis.append(notar)
+                            result_zapis.append(time_zapis)
+                            result_zapis.append(data_zapis)
+                            print("result_zapis ", result_zapis)
+                            return result_zapis
     except Exception as e:
         print(e)
         return False
