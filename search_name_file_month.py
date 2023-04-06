@@ -57,4 +57,34 @@ def search_file(notarius_name):
         elif notarius_name == 'Позднякова':
             return 'D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx'
     except Exception as e:
-        print(e)
+        print("search_file ", e)
+
+def search_month(namber):
+
+    try:
+        if namber == "1":
+            return 'Январь'
+        elif namber == "2":
+            return 'Февраль'
+        elif namber == "3":
+            return 'Март'
+        elif namber == "4":
+            return 'Апрель'
+        elif namber == "5":
+            return 'Май'
+        elif namber == "6":
+            return 'Июнь'
+        elif namber == "7":
+            return 'Июль'
+        elif namber == "8":
+            return 'Август'
+        elif namber == "9":
+            return 'Сентябрь'
+        elif namber == "10":
+            return 'Октябрь'
+        elif namber == "11":
+            return 'Ноябрь'
+        elif namber == "12":
+            return 'Декабрь'
+    except Exception as e:
+        print("search_month ", e)

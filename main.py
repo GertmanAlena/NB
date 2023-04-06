@@ -117,12 +117,8 @@ def contact(message):
         sql_.create_new_person(id_tel, telephone, message.from_user.first_name, message.from_user.last_name, db)
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-        button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-        button2 = types.KeyboardButton('Написать e-mail')
-        button3 = types.KeyboardButton('Информация о моём деле')
-        button4 = types.KeyboardButton('Записаться на приём к нотариусу')
 
-        markup.add(button1, button2, button3, button4)
+        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -136,21 +132,12 @@ def contact(message):
     else:
         if res[3] is None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
-            button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-            button2 = types.KeyboardButton('Написать e-mail')
-            button3 = types.KeyboardButton('Информация о моём деле')
-            button4 = types.KeyboardButton('Записаться на приём к нотариусу')
-            markup.add(button1, button2, button3, button4)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
             mess = f'<b>{res[0]} {res[1]}</b>' + tm.reg_ok() + tm.reg_ok2()
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
         else:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
-            button1 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-            button2 = types.KeyboardButton('Написать e-mail')
-            button3 = types.KeyboardButton('Информация о моём деле')
-            button4 = types.KeyboardButton('Записаться на приём к нотариусу')
-
-            markup.add(button1, button2, button3, button4)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
 
             mess = f'{res[0]} {res[1]} \n{tm.reg_ok()}' \
                    f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
@@ -259,12 +246,7 @@ def bot_message(message):
             log.log_res(message)
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
-            button1 = types.KeyboardButton('Информация о моём деле')
-            button2 = types.KeyboardButton('Перейти на сайт и ознакомиться')
-            button3 = types.KeyboardButton('Написать e-mail')
-            button4 = types.KeyboardButton('Записаться на приём к нотариусу')
-
-            markup.add(button1, button2, button3, button4)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
             bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=markup)
 
         elif message.text == "контора Витебского нотариального округа":
