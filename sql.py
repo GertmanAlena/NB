@@ -187,3 +187,18 @@ def info_id(id, db):
     except db.Error as error:
         log.error_info(id, db.Error)
         print("Failed to get record from MySQL table: {}".format(error))
+
+def info_telephone(id, db):
+    """ответ на запрос пользователя о предоставлении онформации о записи """
+    cursor = db.cursor()
+    try:
+        sql_update_query = """SELECT telephone_number FROM personNotary WHERE id = ? """
+        cursor.execute(sql_update_query, (id,))
+        query_result = cursor.fetchall()
+        for tel in query_result:
+           return tel[0]
+
+    except db.Error as error:
+        log.error_info(id, db.Error)
+        print("Failed to get record from MySQL table: {}".format(error))
+

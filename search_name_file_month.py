@@ -5,34 +5,32 @@ directory = r'D:\studies\BotNotaryMy\Notarius'
 def notar_file(file_name):
     f = str(file_name).split('\\')[4]
     try:
-        if file_name == 'D:/studies/BotNotaryMy/Notarius/Gogol.xlsx':
-
+        if f == 'Gogol.xlsx':
             return case.notarius_name('Гоголь')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Soyka.xlsx':
+        elif f == 'Soyka.xlsx':
             return case.notarius_name('Сойка')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Demidova.xlsx':
+        elif f == 'Demidova.xlsx':
             return case.notarius_name('Демидова')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx':
+        elif f == 'Dumanova.xlsx':
             return case.notarius_name('Думанова')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx':
+        elif f == 'Kovalevskaya.xlsx':
             return case.notarius_name('Ковалевская')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx':
+        elif f == 'Silchenco.xlsx':
             return case.notarius_name('Сильченко')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx':
+        elif f == 'Bondarenco.xlsx':
             return case.notarius_name('Бондаренко')
         elif f == 'Chikan.xlsx':
             return case.notarius_name('Чикан')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Koticova.xlsx':
+        elif f == 'Koticova.xlsx':
             return case.notarius_name('Котикова')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx':
+        elif f == 'Shinkevich.xlsx':
             return case.notarius_name('Шинкевич')
-        elif file_name == 'D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx':
+        elif f == 'Pozdnyakova.xlsx':
             return case.notarius_name('Позднякова')
     except Exception as e:
         print(e)
 
 def search_file(notarius_name):
-
     try:
         if notarius_name == 'Гоголь':
             return 'D:/studies/BotNotaryMy/Notarius/Gogol.xlsx'
@@ -62,23 +60,23 @@ def search_file(notarius_name):
 def search_month(namber):
 
     try:
-        if namber == "1":
+        if namber == "1" or namber == "01":
             return 'Январь'
-        elif namber == "2":
+        elif namber == "2" or namber == "02":
             return 'Февраль'
-        elif namber == "3":
+        elif namber == "3" or namber == "03":
             return 'Март'
-        elif namber == "4":
+        elif namber == "4" or namber == "04":
             return 'Апрель'
-        elif namber == "5":
+        elif namber == "5" or namber == "05":
             return 'Май'
-        elif namber == "6":
+        elif namber == "6" or namber == "06":
             return 'Июнь'
-        elif namber == "7":
+        elif namber == "7" or namber == "07":
             return 'Июль'
-        elif namber == "8":
+        elif namber == "8" or namber == "08":
             return 'Август'
-        elif namber == "9":
+        elif namber == "9" or namber == "09":
             return 'Сентябрь'
         elif namber == "10":
             return 'Октябрь'

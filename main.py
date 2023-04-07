@@ -24,7 +24,7 @@ bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
 
 print('server started')
-ex.search(123)
+# ex.search(123)
 log.server_started(now_time)
 
 db = dbcon()
@@ -118,7 +118,7 @@ def contact(message):
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
 
-        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
+        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -132,12 +132,12 @@ def contact(message):
     else:
         if res[3] is None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi)
             mess = f'<b>{res[0]} {res[1]}</b>' + tm.reg_ok() + tm.reg_ok2()
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
         else:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi)
 
             mess = f'{res[0]} {res[1]} \n{tm.reg_ok()}' \
                    f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
@@ -182,14 +182,26 @@ def bot_message(message):
         else:
             last_name = message.from_user.last_name
 
-        if message.text == 'Информация о моём деле':
+        if message.text == 'Найти сведения о моей записи':
+            spisok = []
+            telephone = sql_.info_telephone(message.from_user.id, db)
+            spisok = ex.search(telephone)
+            print("spisok>>>>>>>>  ", spisok)
+            for i in spisok:
+                action = i[0]
+                notarius = i[1]
+                time_zapis = i[2]
+                data_zapis = i[3]
+                mess = f'Вот что я нашёл, посмотрите. \n' \
+                       f'Вы записаны на <b>{action}</b> к нотариусу <u>{notarius} в {time_zapis} {data_zapis}</u>' \
+                       + tm.tel()
+                bot.send_message(message.chat.id, mess, parse_mode="html")
+
+        elif message.text == 'Информация о моём деле':
             log.log_res(message)
             sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
-            print('sign', sign_up_for_a_month)
             notarius = sql_.info_notarius(message.from_user.id, db)
-            print('notarius', notarius)
             zapros = sql_.info_zapros(message.from_user.id, db)
-            print('zapros', zapros)
             if notarius is None:
                 mess = 'не найдено наследственное дело в базе. ' \
                        'Уточните информацияю по телефону 📞 +375 216 56-88-94'
@@ -246,7 +258,8 @@ def bot_message(message):
             log.log_res(message)
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
+                       bf.button_entry, bf.button_info_zapisi)
             bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=markup)
 
         elif message.text == "контора Витебского нотариального округа":
@@ -350,7 +363,8 @@ def bot_message(message):
                    f'Вам перечня документов либо уточнить информацию по телефону 📞 +375 216 56-88-94'
             markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
-            markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry, bf.back)
+            markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
+                           bf.button_info_zapisi, bf.back)
             bot.send_message(message.chat.id, mess, reply_markup=markup_all, parse_mode="html")
         else:
             mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
@@ -381,51 +395,63 @@ def notarius_time(message, d, power_of_attorney):
         else:
             last_name = message.from_user.last_name
     try:
+        print("message.text>>>>>> ", message.text)
+
         if message.text == "Назад":
             bot_message(message)
         elif message.text == "🟡️ Гоголь Н.А.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)  # по дню и нотариусу найдём свободное время
             time_work = free_time[0]
         elif message.text == "🟡️ Сойка Е.Я.":
             notarius = message.text.split(" ")[1]
-            print(notarius)
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Думанова И.Н.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == '🟡️ Ковалевская А.Г.':
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Сильченко А.В.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Бондаренко Ю.П.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Чикан Н.М.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Котикова О.В.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Шинкевич Е.А.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Позднякова С.Е.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
         elif message.text == "🟡️ Демидова В.Г.":
             notarius = message.text.split(" ")[1]
+            print("notarius>>>>>>>>> ", notarius)
             free_time = x_file(d, notarius)
             time_work = free_time[0]
 
@@ -606,7 +632,7 @@ def callback_inline(call: types.CallbackQuery):
 
     elif action == 'CANCEL':
         markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-        markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry)
+        markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry, bf.button_info_zapisi)
         bot.send_message(chat_id=call.from_user.id, text='Отмена', reply_markup=markup_all)
 
 if __name__ == '__main__':

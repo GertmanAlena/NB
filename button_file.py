@@ -14,3 +14,4 @@ button_info_delo = types.KeyboardButton('Информация о моём дел
 button_website = types.KeyboardButton('Перейти на сайт и ознакомиться')
 button_mail = types.KeyboardButton('Написать e-mail')
 button_entry  = types.KeyboardButton('Записаться на приём к нотариусу')
+button_info_zapisi = types.KeyboardButton('Найти сведения о моей записи')

@@ -14,6 +14,7 @@ def x_file(d, notarius):
     """
     try:
         sheet = activ_list(notarius, d) # получаем нужный акривный лист нужного нотариуса
+        print("sheet>>>>>>>>", sheet)
         max_rows = sheet.max_row
         max_cols = sheet.max_column
         free_time = data_z(sheet, max_rows, max_cols, d) # выбираем свободное время
@@ -62,12 +63,16 @@ def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
 
 def activ_list(notarius, day):
     month = day.split('.')[1]
+    print("month >>>>", month)
     try:
         wb = openpyxl.load_workbook(snfm.search_file(notarius))
+        print("wb >>>>", wb)
         worksheet = wb[snfm.search_month(month)]
+        print("worksheet >>>>", worksheet)
 
         return worksheet
     except Exception as e:
+        print("e activ_list", e)
         log.activ_list(e, notarius, day)
         return False
 
@@ -116,7 +121,7 @@ def search(telephone):
     :param telephone: принимает номер телефона гражданина по которому будет искать куда он записан
     :return: дату время и к какому нотариусу записан гражданин
     """
-    result_zapis = []
+    result_all = []
     directory = snfm.directory
     pathlist = Path(directory).glob('*.xlsx')
     result = ''
@@ -130,25 +135,33 @@ def search(telephone):
                 max_cols = worksheet.max_column
                 for i in range(1, max_rows + 1):            # по строкам
                     for j in range(1, max_cols + 1):            # по столбцам
+                        result_zapis = []
                         if worksheet.cell(row=i, column=j).comment:         # если комментарий есть
+
                             com = worksheet.cell(row=i, column=j).comment
-                            result = str(com).split("\n")[1]
+                            result = str(com).split(" ")
                             tel = ""
                             for k in range(0, len(result)):
-                                print("k ", result[k])
+                                # print("k ", result[k])
                                 if result[k].isnumeric():
-                                    tel += result[k]
-                            print("tel ", tel)
-                        if result == str(telephone):
-                            n = path
-                            notar = snfm.notar_file(n)
-                            time_zapis = str(worksheet.cell(row=i, column=1).value)
-                            data_zapis = str(worksheet.cell(row=1, column=j).value.strftime("%d.%m.%Y"))
-                            result_zapis.append(notar)
-                            result_zapis.append(time_zapis)
-                            result_zapis.append(data_zapis)
-                            print("result_zapis ", result_zapis)
-                            return result_zapis
+                                    tel = result[k]
+                            if str(telephone) == tel:
+                                # print("tel >>>>>>>>>>>>>>>>>>>>>>", tel)
+                                # print("telephone >>>>>>>>>>>>>>>>>>>>>>>>", telephone)
+                                n = path
+                                notar = snfm.notar_file(n)
+                                action = str(worksheet.cell(row=i, column=j).value)
+                                time_zapis = str(worksheet.cell(row=i, column=1).value)
+                                data_zapis = str(worksheet.cell(row=1, column=j).value.strftime("%d.%m.%Y"))
+                                result_zapis.append(action)
+                                result_zapis.append(notar)
+                                result_zapis.append(time_zapis)
+                                result_zapis.append(data_zapis)
+                                print("result_zapis ", result_zapis)
+                                result_all.append(result_zapis)
+
+        print("result_all ", result_all)
+        return result_all
     except Exception as e:
         print(e)
         return False
