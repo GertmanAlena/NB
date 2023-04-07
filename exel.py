@@ -4,7 +4,7 @@ import openpyxl
 import logger as log
 from openpyxl.comments import Comment
 import search_name_file_month as snfm
-
+import datetime as DT
 def x_file(d, notarius):
     """
     метод выбора свободного времени для записи
@@ -153,12 +153,17 @@ def search(telephone):
                                 action = str(worksheet.cell(row=i, column=j).value)
                                 time_zapis = str(worksheet.cell(row=i, column=1).value)
                                 data_zapis = str(worksheet.cell(row=1, column=j).value.strftime("%d.%m.%Y"))
-                                result_zapis.append(action)
-                                result_zapis.append(notar)
-                                result_zapis.append(time_zapis)
-                                result_zapis.append(data_zapis)
-                                print("result_zapis ", result_zapis)
-                                result_all.append(result_zapis)
+                                if data_zapis.split(".")[2] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                                        data_zapis.split(".")[1] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[
+                                    1] and \
+                                        data_zapis.split(".")[0] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[
+                                    0]:
+                                    result_zapis.append(action)
+                                    result_zapis.append(notar)
+                                    result_zapis.append(time_zapis)
+                                    result_zapis.append(data_zapis)
+                                    print("result_zapis ", result_zapis)
+                                    result_all.append(result_zapis)
 
         print("result_all ", result_all)
         return result_all
