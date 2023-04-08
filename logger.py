@@ -124,3 +124,58 @@ def log_bot(message, e):
         f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
         f'перешёл в меню <{message.text}> ошибка {e}', file=botlogfile)
     botlogfile.close()
+def log_do_not_understand(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'Ввёл что-то не понятное: ' + message.text, file=botlogfile)
+    botlogfile.close()
+
+def log_timeout(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'Выбрал время, когда рабочий день окончен: ' + message.text, file=botlogfile)
+    botlogfile.close()
+def log_day_off(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'выбрал день, когда нотариус выходной: ' + message.text, file=botlogfile)
+    botlogfile.close()
+def log_busy(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'выбрал день, когда у нотариуса всё расписано: ' + message.text, file=botlogfile)
+    botlogfile.close()
+def log_notarius_time(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'Ввел что-то не так: ' + message.text, file=botlogfile)
+    botlogfile.close()
+def log_eception_notarius_time(message, e):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
+          'Ввел что-то не так: ' + message.text, file=botlogfile)
+    botlogfile.close()
+
+def log_zapis(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
+        f'перешёл в меню <{message.text}> ', file=botlogfile)
+    botlogfile.close()
+
+def log_error_zapis(message, e):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f'{message} \nпроизошла ошибка при выборе даты записи \n{e}',
+          file=botlogfile)
+    botlogfile.close()
+
+def log_error_callback_inline(message, e):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f'{message} \nпроизошла ошибка в календаре \n{e}',
+          file=botlogfile)
+    botlogfile.close()
+def save_file(e, text):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f'произошла ошибка в {text}  \n{e}',
+          file=botlogfile)
+    botlogfile.close()

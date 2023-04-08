@@ -37,6 +37,8 @@ class Start():
                'Для дальнейшей работы с Ботом' \
                '\nподтвердите пожалуйста свои данные, нажав кнопку ниже \n\n'
         return text_s
+    def photo(self, ):
+        return open('logo.jpg', 'rb')
     def message_reg_ok(self, ):
         """
         текст, если человек сам зарегистрировался и НД нет в базе

@@ -1,8 +1,6 @@
 from telebot import types
 
 class Button():
-
-
     button_power_of_attorney = types.KeyboardButton('✔️Доверенность')
     button_will = types.KeyboardButton('✔️Завещание')
     button_agreement = types.KeyboardButton('✔️Согласие')

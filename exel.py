@@ -14,13 +14,12 @@ def x_file(day, notarius):
     """
     try:
         sheet = activ_list(notarius, day) # получаем нужный акривный лист нужного нотариуса
-        print("sheet>>>>>>>>", sheet)
         max_rows = sheet.max_row
         max_cols = sheet.max_column
         free_time = data_z(sheet, max_rows, max_cols, day) # выбираем свободное время
         return free_time
     except Exception as e:
-        print("Error x_file", e)
+        log.log_exel_x_file(e, "x_file")
         return False
 def data_z(sheet, max_rows, max_cols, day):
     """
@@ -33,26 +32,29 @@ def data_z(sheet, max_rows, max_cols, day):
     """
     free_time = []
     tame_work = ''
-    for i in range(1, max_cols + 1):
-        if sheet.cell(row=1, column=i).value != None and day == sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
-            print(sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"))
-            free_time.append(sheet.cell(row=2, column=i).value)
-            tame_work = sheet.cell(row=2, column=i).value
-            for j in range(2, max_rows+1):
-                if sheet.cell(row=j, column=i).value == None:
-                    free_time.append(sheet.cell(row=j, column=1).value.strftime("%H:%M"))
+    try:
+        for i in range(1, max_cols + 1):
+            if sheet.cell(row=1, column=i).value != None and day == sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
+                print(sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"))
+                free_time.append(sheet.cell(row=2, column=i).value)
+                tame_work = sheet.cell(row=2, column=i).value
+                for j in range(2, max_rows+1):
+                    if sheet.cell(row=j, column=i).value == None:
+                        free_time.append(sheet.cell(row=j, column=1).value.strftime("%H:%M"))
 
-    if day == DT.datetime.now().strftime("%d.%m.%Y"):
-        print("day", day, "DT.datetime.now().strftime ", DT.datetime.now().strftime("%d.%m.%Y"))
-        work_end = tame_work.split("-")[1]
-        print("work_end",work_end)
-        if DT.datetime.now().strftime("%H:%M") > work_end:
-            print(DT.datetime.now().strftime("%H:%M"), " > ", work_end)
-            return None
+        if day == DT.datetime.now().strftime("%d.%m.%Y"):
+            print("day", day, "DT.datetime.now().strftime ", DT.datetime.now().strftime("%d.%m.%Y"))
+            work_end = tame_work.split("-")[1]
+            print("work_end",work_end)
+            if DT.datetime.now().strftime("%H:%M") > work_end:
+                print(DT.datetime.now().strftime("%H:%M"), " > ", work_end)
+                return None
 
-    else:
-        print("free_time ", free_time)
-        return free_time
+        else:
+            print("free_time ", free_time)
+            return free_time
+    except Exception as e:
+        log.log_data_z(e, "data_z")
 
 def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
     """
@@ -125,6 +127,7 @@ def save_file(worksheet, time, day, power_of_attorney, name, last_name, tel):
                         print(">>>>cell.value<<<<<", worksheet.cell(row=j, column=i).value)
                         return True
     except Exception as e:
+        log.save_file(e, "save_file")
         print(e)
         return False
 
@@ -181,5 +184,6 @@ def search(telephone):
         print("result_all ", result_all)
         return result_all
     except Exception as e:
+        log.search(e)
         print(e)
         return False
