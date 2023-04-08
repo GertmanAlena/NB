@@ -1,4 +1,4 @@
-import case
+import search_notar_doc
 
 directory = r'D:\studies\BotNotaryMy\Notarius'
 

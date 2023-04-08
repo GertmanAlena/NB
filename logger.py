@@ -50,9 +50,9 @@ def log_res(message):
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'перешёл в меню ->: ' + message.text, file=botlogfile)
     botlogfile.close()
-def replies_received(name, last_name):
+def replies_received(name, id):
     botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
-    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + name, last_name,
+    print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + name, id,
           'получил уведомление "на все запросы пришли ответы" ->: ', file=botlogfile)
     botlogfile.close()
 def log_text_split(message, ms):
@@ -109,4 +109,18 @@ def activ_list(e, notarius, day):
 def log_zapis_not(e, notarius):
     botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
     print(f'произошла ошибка в zapis_not {e} {notarius} ', file=botlogfile)
+    botlogfile.close()
+
+def log_zapis_bot(message):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
+        f'перешёл в меню <{message.text}>', file=botlogfile)
+    botlogfile.close()
+
+def log_bot(message, e):
+    botlogfile = open('loggerBot.log', 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
+        f'перешёл в меню <{message.text}> ошибка {e}', file=botlogfile)
     botlogfile.close()

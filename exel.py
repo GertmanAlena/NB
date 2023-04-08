@@ -5,7 +5,7 @@ import logger as log
 from openpyxl.comments import Comment
 import search_name_file_month as snfm
 import datetime as DT
-def x_file(d, notarius):
+def x_file(day, notarius):
     """
     метод выбора свободного времени для записи
     :param d: выбранный день
@@ -13,16 +13,16 @@ def x_file(d, notarius):
     :return: free_time список свободного времени
     """
     try:
-        sheet = activ_list(notarius, d) # получаем нужный акривный лист нужного нотариуса
+        sheet = activ_list(notarius, day) # получаем нужный акривный лист нужного нотариуса
         print("sheet>>>>>>>>", sheet)
         max_rows = sheet.max_row
         max_cols = sheet.max_column
-        free_time = data_z(sheet, max_rows, max_cols, d) # выбираем свободное время
+        free_time = data_z(sheet, max_rows, max_cols, day) # выбираем свободное время
         return free_time
     except Exception as e:
         print("Error x_file", e)
         return False
-def data_z(sheet, max_rows, max_cols, d):
+def data_z(sheet, max_rows, max_cols, day):
     """
     метод поиска нужной ячейки для записи принимает параметры
     :param sheet: активный лист
@@ -32,14 +32,27 @@ def data_z(sheet, max_rows, max_cols, d):
     :return:  free_time список со свободным временем для записи
     """
     free_time = []
+    tame_work = ''
     for i in range(1, max_cols + 1):
-        if sheet.cell(row=1, column=i).value != None and d == sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
+        if sheet.cell(row=1, column=i).value != None and day == sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"):
             print(sheet.cell(row=1, column=i).value.strftime("%d.%m.%Y"))
             free_time.append(sheet.cell(row=2, column=i).value)
+            tame_work = sheet.cell(row=2, column=i).value
             for j in range(2, max_rows+1):
                 if sheet.cell(row=j, column=i).value == None:
                     free_time.append(sheet.cell(row=j, column=1).value.strftime("%H:%M"))
-    return free_time
+
+    if day == DT.datetime.now().strftime("%d.%m.%Y"):
+        print("day", day, "DT.datetime.now().strftime ", DT.datetime.now().strftime("%d.%m.%Y"))
+        work_end = tame_work.split("-")[1]
+        print("work_end",work_end)
+        if DT.datetime.now().strftime("%H:%M") > work_end:
+            print(DT.datetime.now().strftime("%H:%M"), " > ", work_end)
+            return None
+
+    else:
+        print("free_time ", free_time)
+        return free_time
 
 def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
     """
