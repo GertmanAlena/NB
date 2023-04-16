@@ -1,4 +1,4 @@
-import search_notar_doc
+import search_notar_doc as snd
 
 directory = r'D:\studies\BotNotaryMy\Notarius'
 
@@ -6,27 +6,27 @@ def notar_file(file_name):
     f = str(file_name).split('\\')[4]
     try:
         if f == 'Gogol.xlsx':
-            return case.notarius_name('Гоголь')
+            return snd.case.notarius_name('Гоголь')
         elif f == 'Soyka.xlsx':
-            return case.notarius_name('Сойка')
+            return snd.case.notarius_name('Сойка')
         elif f == 'Demidova.xlsx':
-            return case.notarius_name('Демидова')
+            return snd.case.notarius_name('Демидова')
         elif f == 'Dumanova.xlsx':
-            return case.notarius_name('Думанова')
+            return snd.case.notarius_name('Думанова')
         elif f == 'Kovalevskaya.xlsx':
-            return case.notarius_name('Ковалевская')
+            return snd.case.notarius_name('Ковалевская')
         elif f == 'Silchenco.xlsx':
-            return case.notarius_name('Сильченко')
+            return snd.case.notarius_name('Сильченко')
         elif f == 'Bondarenco.xlsx':
-            return case.notarius_name('Бондаренко')
+            return snd.case.notarius_name('Бондаренко')
         elif f == 'Chikan.xlsx':
-            return case.notarius_name('Чикан')
+            return snd.case.notarius_name('Чикан')
         elif f == 'Koticova.xlsx':
-            return case.notarius_name('Котикова')
+            return snd.case.notarius_name('Котикова')
         elif f == 'Shinkevich.xlsx':
-            return case.notarius_name('Шинкевич')
+            return snd.case.notarius_name('Шинкевич')
         elif f == 'Pozdnyakova.xlsx':
-            return case.notarius_name('Позднякова')
+            return snd.case.notarius_name('Позднякова')
     except Exception as e:
         print(e)
 
