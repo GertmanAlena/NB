@@ -30,30 +30,57 @@ def notar_file(file_name):
     except Exception as e:
         print(e)
 
+# def search_file(notarius_name):
+#     try:
+#         if notarius_name == 'Гоголь':
+#             return 'D:/studies/BotNotaryMy/Notarius/Gogol.xlsx'
+#         elif notarius_name == 'Сойка':
+#             return 'D:/studies/BotNotaryMy/Notarius/Soyka.xlsx'
+#         elif notarius_name == 'Демидова':
+#             return 'D:/studies/BotNotaryMy/Notarius/Demidova.xlsx'
+#         elif notarius_name == 'Думанова':
+#             return 'D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx'
+#         elif notarius_name == 'Ковалевская':
+#             return 'D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx'
+#         elif notarius_name == 'Сильченко':
+#             return 'D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx'
+#         elif notarius_name == 'Бондаренко':
+#             return 'D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx'
+#         elif notarius_name == 'Чикан':
+#             return 'D:/studies/BotNotaryMy/Notarius/Chikan.xlsx'
+#         elif notarius_name == 'Котикова':
+#             return 'D:/studies/BotNotaryMy/Notarius/Koticova.xlsx'
+#         elif notarius_name == 'Шинкевич':
+#             return 'D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx'
+#         elif notarius_name == 'Позднякова':
+#             return 'D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx'
+#     except Exception as e:
+#         print("search_file ", e)
+
 def search_file(notarius_name):
     try:
         if notarius_name == 'Гоголь':
-            return 'D:/studies/BotNotaryMy/Notarius/Gogol.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Gogol.xlsx'
         elif notarius_name == 'Сойка':
-            return 'D:/studies/BotNotaryMy/Notarius/Soyka.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Soyka.xlsx'
         elif notarius_name == 'Демидова':
-            return 'D:/studies/BotNotaryMy/Notarius/Demidova.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Demidova.xlsx'
         elif notarius_name == 'Думанова':
-            return 'D:/studies/BotNotaryMy/Notarius/Dumanova.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Dumanova.xlsx'
         elif notarius_name == 'Ковалевская':
-            return 'D:/studies/BotNotaryMy/Notarius/Kovalevskaya.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Kovalevskaya.xlsx'
         elif notarius_name == 'Сильченко':
-            return 'D:/studies/BotNotaryMy/Notarius/Silchenco.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Silchenco.xlsx'
         elif notarius_name == 'Бондаренко':
-            return 'D:/studies/BotNotaryMy/Notarius/Bondarenco.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Bondarenco.xlsx'
         elif notarius_name == 'Чикан':
-            return 'D:/studies/BotNotaryMy/Notarius/Chikan.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Chikan.xlsx'
         elif notarius_name == 'Котикова':
-            return 'D:/studies/BotNotaryMy/Notarius/Koticova.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Koticova.xlsx'
         elif notarius_name == 'Шинкевич':
-            return 'D:/studies/BotNotaryMy/Notarius/Shinkevich.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Shinkevich.xlsx'
         elif notarius_name == 'Позднякова':
-            return 'D:/studies/BotNotaryMy/Notarius/Pozdnyakova.xlsx'
+            return 'sftp://root@188.120.250.82/root/bot/Notarius/Pozdnyakova.xlsx'
     except Exception as e:
         print("search_file ", e)
 
