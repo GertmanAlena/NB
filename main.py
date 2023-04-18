@@ -48,10 +48,10 @@ calendar_1 = CallbackData('calendar_1', 'action', 'year', 'month', 'day')
 
 def do_work():
     """метод ожидания нужного времени и даты для уведомления второй поток"""
-    print("...1...")
+    print("processing requests starting")
     while True:
         """уведомление, когда пришли ответы на все запросы по НД"""
-        print("...3...")
+        print("while True requests...")
         if DT.datetime.now().strftime("%H:%M") == then3:
             res = n.notif(db)
             try:
@@ -97,7 +97,7 @@ def do_work():
         else:
             time.sleep(30)
             print(DT.datetime.now().strftime("%H:%M"))
-print("...2...")
+print("processing bot started...")
 @bot.message_handler(commands=['start'])
 def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
@@ -322,7 +322,8 @@ def bot_message(message):
             elif message.text == '✔️Согласие':
                 log.log_res(message)
                 power_of_attorney = "Согласие"
-                mess = f'<b>{name} <u>{last_name}</u>\n\n{tm_info_zapis.data_zapis()}{power_of_attorney} ??🗓️</b>'
+
+                mess = f'<b>{name} <u>{last_name}</u>\n\n{tm_info_zapis.data_zapis()} {power_of_attorney} ??🗓️</b>'
                 bot.send_message(message.chat.id, mess, reply_markup=calendar.create_calendar(
                     name=calendar_1.prefix,
                     year=now_time.year,
@@ -395,10 +396,8 @@ def notarius_time(message, d, power_of_attorney):
                     or message.text == "🟡️ Демидова В.Г.":
             notarius = message.text.split(" ")[1]
             free_time = x_file(d, notarius)
-            print("free_time main ....", free_time)
 
             if free_time is None:
-                print("free_time else >>>>>>>", free_time)
                 mess = f'‼ СЕГОДНЯ ПРИЁМ ГРАЖДАН ОКОНЧЕН ‼\n' \
                        f'\n{d}  \nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️'
                 bot.send_message(message.chat.id, mess, reply_markup=calendar.create_calendar(
@@ -440,7 +439,7 @@ def notarius_time(message, d, power_of_attorney):
 
             elif free_time is not None:
                 time_work = free_time[0]
-                print("time_work ", time_work)
+
                 if time_work == "выходной":
                     log.log_day_off(message)
                     mess2 = f'\n<b>{name} <u>{last_name}</u>\n\n' \
@@ -543,6 +542,7 @@ def zapis(message, notarius, d, notarial_document):
 def callback_inline(call: types.CallbackQuery):
     try:
         power_of_attorney = call.message.text.split(" ")[9]
+
         name, action, year, month, day = call.data.split(calendar_1.sep)
         date = calendar.calendar_query_handler(bot=bot, call=call, name=name, action=action, year=year,
                                                month=month, day=day)

@@ -66,6 +66,7 @@ def zapis_not(time, notarius, day, power_of_attorney, name, last_name, tel):
     :return:
     """
     print("in zapis_not")
+    print("power_of_attorney", power_of_attorney)
     try:
         wb = openpyxl.load_workbook(snfm.search_file(notarius))
         worksheet = wb.active
