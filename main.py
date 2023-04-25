@@ -44,8 +44,6 @@ log.log_Connect_sql()
 calendar = Calendar(language=RUSSIAN_LANGUAGE)
 calendar_1 = CallbackData('calendar_1', 'action', 'year', 'month', 'day')
 
-
-
 def do_work():
     """метод ожидания нужного времени и даты для уведомления второй поток"""
     print("processing requests starting")
@@ -398,7 +396,7 @@ def notarius_time(message, d, power_of_attorney):
             free_time = x_file(d, notarius)
             print("free_time main ", free_time)
             if free_time is None:
-                mess = f'‼ СЕГОДНЯ ПРИЁМ ГРАЖДАН ОКОНЧЕН ‼\n' \
+                mess = f'‼ На эту дату нет записи попробуйте ещё раз ‼\n' \
                        f'\n{d}  \nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️'
                 bot.send_message(message.chat.id, mess, reply_markup=calendar.create_calendar(
                     name=calendar_1.prefix,
@@ -567,8 +565,25 @@ def callback_inline(call: types.CallbackQuery):
         if action == 'DAY':
             d = date.strftime("%d.%m.%Y")
 
-            if d.split(".")[2] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
-                    d.split(".")[1] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[1] and \
+            if d.split(".")[2] > DT.datetime.now().strftime("%d.%m.%Y").split(".")[2]:
+                message_day = bot.send_message(chat_id=call.from_user.id,
+                                               text=f'Вы выбрали <b>{date.strftime("%d.%m.%Y")}</b> '
+                                                    f'\n<u>УКАЖИТЕ</u> к какому нотариусу вы хотите '
+                                                    f'записаться?',
+                                               reply_markup=markup, parse_mode="html")
+                bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
+
+            elif d.split(".")[2] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                    d.split(".")[1] > DT.datetime.now().strftime("%d.%m.%Y").split(".")[1]:
+                message_day = bot.send_message(chat_id=call.from_user.id,
+                                               text=f'Вы выбрали <b>{date.strftime("%d.%m.%Y")}</b> '
+                                                    f'\n<u>УКАЖИТЕ</u> к какому нотариусу вы хотите '
+                                                    f'записаться?',
+                                               reply_markup=markup, parse_mode="html")
+                bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
+
+            elif d.split(".")[2] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                    d.split(".")[1] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[1] and \
                     d.split(".")[0] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[0]:
                 message_day = bot.send_message(chat_id=call.from_user.id,
                                                text=f'Вы выбрали <b>{date.strftime("%d.%m.%Y")}</b> '
@@ -576,6 +591,8 @@ def callback_inline(call: types.CallbackQuery):
                                                     f'записаться?',
                                                reply_markup=markup, parse_mode="html")
                 bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
+
+
             else:
 
                 bot.send_message(chat_id=call.from_user.id, text=f'<b>Вы выбрали прошедшую дату</b> '
