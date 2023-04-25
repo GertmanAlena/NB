@@ -7,6 +7,7 @@ class Button():
     button_statement = types.KeyboardButton('✔️Заявление')
     button_consultation = types.KeyboardButton('✔️Консультация')
     button_other_action = types.KeyboardButton('✔️иное действие')
+    button_cancel_recording = types.KeyboardButton('✔️Отмена записи')
     back = types.KeyboardButton('Назад')
 
     button_info_delo = types.KeyboardButton('Информация о моём деле')

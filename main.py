@@ -21,6 +21,7 @@ import text_messages_bot_photo
 import button_file
 import exel as ex
 import url
+# import text_messages_bot_photo as tm
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
@@ -32,6 +33,7 @@ tm_info_zapis = text_messages_bot_photo.Info_Zapis()
 tm_info_notification = text_messages_bot_photo.Info_Notification()
 tm_start = text_messages_bot_photo.Start()
 tm_help = text_messages_bot_photo.Help()
+tm_cancel_recording = text_messages_bot_photo.Info_Zapis()
 url = url.URL()
 
 print('server started')
@@ -131,7 +133,7 @@ def contact(message):
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
 
-        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi, bf.back)
+        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -248,7 +250,7 @@ def bot_message(message):
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
                 markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
-                           bf.button_entry, bf.button_info_zapisi, bf.back)
+                           bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
                 bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=markup)
 
             elif message.text == "Минский городской нотариальный округ":
@@ -300,6 +302,14 @@ def bot_message(message):
                            bf.button_consultation, bf.button_other_action, bf.back)
 
                 bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
+            elif message.text == '✔️Отмена записи':
+
+                mess = f'<b>{name} <u>{last_name}</u></b>\n\n{tm_cancel_recording.cancel_recording()}'
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+
+                markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
+                           bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
+                bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
             elif message.text == '✔️Доверенность':
                 log.log_res(message)
                 power_of_attorney = "Доверенность"
