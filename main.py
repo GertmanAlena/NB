@@ -15,7 +15,7 @@ from _locale import Error
 from myTime import then
 from myTime import then3
 from exel import x_file
-from exel import zapis_not
+from exel import save_file
 import search_notar_doc as C
 import text_messages_bot_photo
 import button_file
@@ -396,7 +396,7 @@ def notarius_time(message, d, power_of_attorney):
                     or message.text == "🟡️ Демидова В.Г.":
             notarius = message.text.split(" ")[1]
             free_time = x_file(d, notarius)
-
+            print("free_time main ", free_time)
             if free_time is None:
                 mess = f'‼ СЕГОДНЯ ПРИЁМ ГРАЖДАН ОКОНЧЕН ‼\n' \
                        f'\n{d}  \nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️'
@@ -526,7 +526,8 @@ def zapis(message, notarius, d, notarial_document):
                 time_records = message.text
             id_tel = message.chat.id
             tel = sql_.info_id(id_tel, db)
-            bol = zapis_not(time_records, notarius, d, notarial_document, name, last_name, tel)
+            bol = save_file(time_records, notarius, d, notarial_document, name, last_name, tel)
+            print(bol)
             if bol:
                 mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {C.notarius_name(notarius)} \n{d} в {time_records}</b>' \
                        f'\n{C.documents(notarial_document)}'
