@@ -1,5 +1,3 @@
-from tkinter import Text
-
 import requests
 import threading
 import telebot
@@ -102,7 +100,6 @@ def do_work():
 
 
 print("processing bot started...")
-
 
 @bot.message_handler(commands=['start'])
 def start(message):
