@@ -1,3 +1,5 @@
+from tkinter import Text
+
 import requests
 import threading
 import telebot
@@ -21,7 +23,6 @@ import text_messages_bot_photo
 import button_file
 import exel as ex
 import url
-# import text_messages_bot_photo as tm
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
@@ -46,6 +47,7 @@ log.log_Connect_sql()
 calendar = Calendar(language=RUSSIAN_LANGUAGE)
 calendar_1 = CallbackData('calendar_1', 'action', 'year', 'month', 'day')
 
+
 def do_work():
     """метод ожидания нужного времени и даты для уведомления второй поток"""
     print("processing requests starting")
@@ -57,7 +59,7 @@ def do_work():
             try:
                 if res is not None:
                     for i in res:
-                        if i[3] is None: #  если графа с фамилией пуста, фамилию не пишем
+                        if i[3] is None:  # если графа с фамилией пуста, фамилию не пишем
                             params = {
                                 'chat_id': i[0],
                                 'text': f'{i[2]} {tm_info_notification.text_otvet}{tm_info_notification.text_zapis} {i[10]} в срок до {i[9]}',
@@ -97,7 +99,11 @@ def do_work():
         else:
             time.sleep(30)
             print(DT.datetime.now().strftime("%H:%M"))
+
+
 print("processing bot started...")
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
@@ -112,7 +118,6 @@ def start(message):
         last_name = message.from_user.last_name
 
     mess = f'<b>Здравствуйте, {name} {last_name}</b>' + tm_start.text_start()
-
 
     bot.send_photo(message.chat.id, photo)
     markup = types.ReplyKeyboardMarkup(row_width=1)
@@ -133,7 +138,8 @@ def contact(message):
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
 
-        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
+        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi,
+                   bf.back, bf.button_cancel_recording)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -147,17 +153,22 @@ def contact(message):
     else:
         if res[3] is None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi, bf.back)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi,
+                       bf.backbf.button_website, bf.button_mail, bf.button_info_delo,
+                       bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
             mess = f'<b>{res[0]} {res[1]}</b>' + tm_start.reg_ok() + tm_start.reg_ok2()
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
         else:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi, bf.back)
+            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
+                       bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
 
             mess = f'{res[0]} {res[1]} \n{tm_start.message_reg_ok()}' \
                    f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
                    f'Ожидайте уведомление до <u><b>{res[2]}</b></u>\n{tm_start.reg_ok2()}'
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+
+
 @bot.message_handler(commands=['help'])
 def help_command(message):
     log.log_help(message)
@@ -166,12 +177,15 @@ def help_command(message):
         l_name = " "
     mess = f'<b>{message.from_user.first_name} <u>{l_name}</u></b>\n {tm_help.text_help}'
     bot.send_message(message.chat.id, mess, parse_mode="html")
+
+
 @bot.message_handler(content_types=["sticker"])
 def send_sticker(message):
     """Получим ID Стикера"""
     sticker_id = message.sticker.file_id
     bot.send_sticker(message.chat.id, sticker_id)
     log.log_sticker(message, sticker_id)
+
 
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
@@ -191,15 +205,19 @@ def bot_message(message):
             if message.text == 'Найти сведения о моей записи':
                 telephone = sql_.info_telephone(message.from_user.id, db)
                 spisok = ex.search(telephone)
-                for i in spisok:
-                    action = i[0]
-                    notarius = i[1]
-                    time_zapis = i[2]
-                    data_zapis = i[3]
-                    mess = f'Вот что я нашёл, посмотрите. \n' \
-                           f'Вы записаны на <b>{action}</b> к нотариусу <u>{notarius} в {time_zapis} {data_zapis}</u>' \
-                           + tm_info_zapis.tel()
+                if len(spisok) == 0:
+                    mess = f'<b>Записи не найдены!!.</b> \n {tm_info_zapis.tel()}'
                     bot.send_message(message.chat.id, mess, parse_mode="html")
+                else:
+                    for i in spisok:
+                        action = i[0]
+                        notarius = i[1]
+                        time_zapis = i[2]
+                        data_zapis = i[3]
+                        mess = f'Вот что я нашёл, посмотрите. \n' \
+                               f'Вы записаны на <b>{action}</b> к нотариусу <u>{notarius} в {time_zapis} {data_zapis}</u>' \
+                               + tm_info_zapis.tel()
+                        bot.send_message(message.chat.id, mess, parse_mode="html")
 
             elif message.text == 'Информация о моём деле':
                 log.log_res(message)
@@ -241,17 +259,18 @@ def bot_message(message):
                        f'Выберите в какую контору Вы хотите написать письмо или позвонить?'
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-                markup.add(bf.button_office_Minsk_obl, bf.button_office_Minsk_gor, bf.button_office_Vitebsk, bf.button_office_Gomel,
+                markup.add(bf.button_office_Minsk_obl, bf.button_office_Minsk_gor, bf.button_office_Vitebsk,
+                           bf.button_office_Gomel,
                            bf.button_office_Grodno, bf.button_office_Brest, bf.button_office_Mogilev, bf.back)
                 bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
 
             elif message.text == "Назад":
                 log.log_res(message)
-                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-
-                markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
-                           bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
-                bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=markup)
+                # markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+                #
+                # markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
+                #            bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
+                bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=start_button())
 
             elif message.text == "Минский городской нотариальный округ":
                 bot.send_message(message.chat.id, 'в разработке')
@@ -304,12 +323,30 @@ def bot_message(message):
                 bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
             elif message.text == '✔️Отмена записи':
 
-                mess = f'<b>{name} <u>{last_name}</u></b>\n\n{tm_cancel_recording.cancel_recording()}'
-                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+                telephone = sql_.info_telephone(message.from_user.id, db)
+                spisok = ex.search(telephone)
+                if len(spisok) == 0:
+                    mess = f'<b>Записи не найдены!!.</b> \n {tm_info_zapis.tel()}'
+                    bot.send_message(message.chat.id, mess, parse_mode="html")
+                else:
+                    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+                    print(spisok, "spisok")
+                    print(len(spisok), "len(spisok)")
 
-                markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
-                           bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
-                bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
+                    for i in range(0, len(spisok)):
+                        res = f'нотариус {spisok[i][1]} - {spisok[i][0]} время {spisok[i][2]} дата {spisok[i][3]}'
+                        print(res, "res")
+
+                        button = types.KeyboardButton(res)
+                        markup.add(button)
+                    back = types.KeyboardButton('Назад')
+                    markup.add(back)
+
+                    mess = bot.send_message(message.from_user.id,
+                                            text=f'<b>{name} <u>{last_name}</u></b>\n\nЧто удалять?',
+                                            reply_markup=markup, parse_mode="html")
+                    bot.register_next_step_handler(mess, delete_file)
+
             elif message.text == '✔️Доверенность':
                 log.log_res(message)
                 power_of_attorney = "Доверенность"
@@ -359,19 +396,44 @@ def bot_message(message):
                 mess = f'<u>{name} {last_name}</u>\n\nДля оформление болеее сложного действия ' \
                        f'Вам необходимо записаться на консультацию для получения необходимого ' \
                        f'Вам перечня документов либо уточнить информацию по телефону 📞 +375 216 56-88-94'
-                markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-
-                markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                               bf.button_info_zapisi, bf.back)
-                bot.send_message(message.chat.id, mess, reply_markup=markup_all, parse_mode="html")
+                # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+                #
+                # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
+                #                bf.button_info_zapisi, bf.back)
+                bot.send_message(message.chat.id, mess, reply_markup=start_button(), parse_mode="html")
             else:
                 log.log_res(message)
                 mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
                        f'\n\nЯ Вас не понимаю!! '
-                bot.send_message(message.chat.id, mess + '\U0001F534', parse_mode="html")
+                # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+                #
+                # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
+                #                bf.button_info_zapisi, bf.back)
+                bot.send_message(message.chat.id, mess + '\U0001F534', reply_markup=start_button(), parse_mode="html")
+                # bot.send_message(message.chat.id, mess + '\U0001F534', parse_mode="html")
 
     except Exception as e:
         log.log_bot(message, e)
+def delete_file(message):
+    print("mess", message.text)
+    a = telebot.types.ReplyKeyboardRemove()
+    bot.send_message(message.from_user.id, 'Удаляем......', reply_markup=a)
+    if message.text == "Назад":
+        bot_message(message)
+    else:
+        try:
+            del_ok = ex.delete_file(message.text)
+            if del_ok is True:
+                bot.send_message(message.from_user.id, f'Запись успешно удалена?', reply_markup=start_button())
+        except Exception as e:
+            log.log_bot(message, e)
+
+def start_button():
+    markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+
+    markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
+                   bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
+    return markup_all
 
 def notarius_time(message, d, power_of_attorney):
     """
@@ -397,11 +459,11 @@ def notarius_time(message, d, power_of_attorney):
             bot_message(message)
 
         elif message.text == "🟡️ Гоголь Н.А." or message.text == "🟡️ Сойка Е.Я." \
-                    or message.text == "🟡️ Думанова И.Н." or message.text == '🟡️ Ковалевская А.Г.'\
-                    or message.text == "🟡️ Сильченко А.В." or message.text == "🟡️ Бондаренко Ю.П."\
-                    or message.text == "🟡️ Чикан Н.М." or message.text == "🟡️ Котикова О.В."\
-                    or message.text == "🟡️ Шинкевич Е.А." or message.text == "🟡️ Позднякова С.Е."\
-                    or message.text == "🟡️ Демидова В.Г.":
+                or message.text == "🟡️ Думанова И.Н." or message.text == '🟡️ Ковалевская А.Г.' \
+                or message.text == "🟡️ Сильченко А.В." or message.text == "🟡️ Бондаренко Ю.П." \
+                or message.text == "🟡️ Чикан Н.М." or message.text == "🟡️ Котикова О.В." \
+                or message.text == "🟡️ Шинкевич Е.А." or message.text == "🟡️ Позднякова С.Е." \
+                or message.text == "🟡️ Демидова В.Г.":
             notarius = message.text.split(" ")[1]
             free_time = x_file(d, notarius)
             print("free_time main ", free_time)
@@ -413,16 +475,15 @@ def notarius_time(message, d, power_of_attorney):
                     year=now_time.year,
                     month=now_time.month), parse_mode="html")
                 log.log_timeout(message)
+            elif free_time[0] == "воскресенье":
+                log.log_day_off(message)
+                mess2 = f'\n{name} {last_name}\n\n{d} <b>{tm_info_zapis.sunday()}</b>'
+                bot.send_message(message.chat.id, mess2, reply_markup=start_button(), parse_mode="html")
             elif free_time[0] == "выходной":
                 log.log_day_off(message)
                 mess2 = f'\n{name} {last_name}\n\n' \
-                        f'Нотариус {C.notarius_name(notarius)}\n' \
-                        f'{d} ‼ НЕ РАБОТАЕТ ‼\n' \
-                        f'\nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️'
-                bot.send_message(message.chat.id, mess2, reply_markup=calendar.create_calendar(
-                    name=calendar_1.prefix,
-                    year=now_time.year,
-                    month=now_time.month), parse_mode="html")
+                        f'Нотариус <b>{C.notarius_name(notarius)}</b>  {d} <b>{tm_info_zapis.day_off()}</b>'
+                bot.send_message(message.chat.id, mess2, reply_markup=start_button(), parse_mode="html")
             elif len(free_time) == 1:
                 log.log_busy(message)
                 mess = bot.send_message(message.from_user.id,
@@ -473,7 +534,7 @@ def notarius_time(message, d, power_of_attorney):
                 bot.register_next_step_handler(mess, zapis, notarius, d, power_of_attorney)
 
     except Exception as e:
-        log.log_eception_notarius_time(message,e)
+        log.log_eception_notarius_time(message, e)
         print("Error>>> 397", e.args[0])
         if e.args[0] == "list index out of range":
             mess = f'\n<b>{name} <u>{last_name}</u>\n\nНа эту дату нет записи попробуйте ещё раз</b>'
@@ -487,6 +548,8 @@ def notarius_time(message, d, power_of_attorney):
             button1 = types.KeyboardButton('Назад')
             markup_exception.add(button1)
             bot.send_message(message.chat.id, mess, reply_markup=markup_exception, parse_mode="html")
+
+
 def zapis(message, notarius, d, notarial_document):
     """
     метод для поиска времени записи к нотариусу
@@ -547,8 +610,15 @@ def zapis(message, notarius, d, notarial_document):
                 bot_message(message)
     except Exception as e:
         log.log_zapis(message, e)
+
+
 @bot.callback_query_handler(func=lambda call: call.data.startswith(calendar_1.prefix))
 def callback_inline(call: types.CallbackQuery):
+    """
+    сюда приходит выбранная пользователем дата для записи
+    :param call: сообщение пользователя
+    :return:
+    """
     try:
         power_of_attorney = call.message.text.split(" ")[9]
 
@@ -601,22 +671,20 @@ def callback_inline(call: types.CallbackQuery):
                                                     f'записаться?',
                                                reply_markup=markup, parse_mode="html")
                 bot.register_next_step_handler(message_day, notarius_time, d, power_of_attorney)
-
-
             else:
 
-                bot.send_message(chat_id=call.from_user.id, text=f'<b>Вы выбрали прошедшую дату</b> '
-                                                                               f'‼ <u>{tm_start.again()}</u> ‼ ', reply_markup=calendar.create_calendar(
-                    name=calendar_1.prefix,
-                    year=now_time.year,
-                    month=now_time.month), parse_mode="html")
+                bot.send_message(chat_id=call.from_user.id, text=f'<b>Вы выбрали прошедшую дату</b>\n\n'
+                                                                 f'‼ <u>{tm_start.again()}</u> ‼ ',
+                                 reply_markup=start_button(), parse_mode="html")
 
         elif action == 'CANCEL':
-            markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry, bf.button_info_zapisi, bf.back)
-            bot.send_message(chat_id=call.from_user.id, text='Отмена', reply_markup=markup_all)
+            # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+            # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
+            #                bf.button_info_zapisi, bf.back)
+            bot.send_message(chat_id=call.from_user.id, text='Отмена', reply_markup=start_button())
     except Exception as e:
         log.log_error_callback_inline(call.message.text, e)
+
 
 if __name__ == '__main__':
     threaded = threading.Thread(target=do_work, daemon=True).start()
