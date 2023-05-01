@@ -65,7 +65,8 @@ def data_z(sheet, day, notarius, max_rows, max_cols):
             work_end = time_work.split("-")[1]
         if day == DT.datetime.now().strftime("%d.%m.%Y") and DT.datetime.now().strftime("%H:%M") > work_end:
             print(DT.datetime.now().strftime("%H:%M"), " > ", work_end)
-            return None
+            free_time.append('завершён')
+            return free_time
         else:
             return free_time
     except Exception as e:

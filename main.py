@@ -450,11 +450,13 @@ def notarius_time(message, d, power_of_attorney):
             if free_time is None:
                 mess = f'‼ На эту дату нет записи попробуйте ещё раз ‼\n' \
                        f'\n{d}  \nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️'
-                bot.send_message(message.chat.id, mess, reply_markup=calendar.create_calendar(
-                    name=calendar_1.prefix,
-                    year=now_time.year,
-                    month=now_time.month), parse_mode="html")
+
+                bot.send_message(message.chat.id, mess, reply_markup=start_button(), parse_mode="html")
                 log.log_timeout(message)
+            elif free_time[-1] == "завершён":
+                log.log_day_off(message)
+                mess2 = f'\n{name} {last_name}\n\n{d} у нотариуса {notarius} <b>{tm_info_zapis.day_off2()}</b>'
+                bot.send_message(message.chat.id, mess2, reply_markup=start_button(), parse_mode="html")
             elif free_time[0] == "воскресенье":
                 log.log_day_off(message)
                 mess2 = f'\n{name} {last_name}\n\n{d} <b>{tm_info_zapis.sunday()}</b>'
