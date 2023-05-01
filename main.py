@@ -12,10 +12,8 @@ from data_base import dbcon
 import sql
 import notification as n
 from _locale import Error
-from myTime import then
-from myTime import then3
-from exel import x_file
-from exel import save_file
+from myTime import then, then3
+from exel import x_file, save_file
 import search_notar_doc as C
 import text_messages_bot_photo
 import button_file
@@ -97,10 +95,7 @@ def do_work():
         else:
             time.sleep(30)
             print(DT.datetime.now().strftime("%H:%M"))
-
-
 print("processing bot started...")
-
 @bot.message_handler(commands=['start'])
 def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
@@ -123,8 +118,6 @@ def start(message):
     markup.add(tel)
 
     bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
-
-
 @bot.message_handler(content_types=["contact"])
 def contact(message):
     telephone = message.contact.phone_number
@@ -164,8 +157,6 @@ def contact(message):
                    f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
                    f'Ожидайте уведомление до <u><b>{res[2]}</b></u>\n{tm_start.reg_ok2()}'
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
-
-
 @bot.message_handler(commands=['help'])
 def help_command(message):
     log.log_help(message)
@@ -174,16 +165,12 @@ def help_command(message):
         l_name = " "
     mess = f'<b>{message.from_user.first_name} <u>{l_name}</u></b>\n {tm_help.text_help}'
     bot.send_message(message.chat.id, mess, parse_mode="html")
-
-
 @bot.message_handler(content_types=["sticker"])
 def send_sticker(message):
     """Получим ID Стикера"""
     sticker_id = message.sticker.file_id
     bot.send_sticker(message.chat.id, sticker_id)
     log.log_sticker(message, sticker_id)
-
-
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
     """
@@ -263,10 +250,6 @@ def bot_message(message):
 
             elif message.text == "Назад":
                 log.log_res(message)
-                # markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-                #
-                # markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
-                #            bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
                 bot.send_message(message.chat.id, "Выберите что Вам необходимо", reply_markup=start_button())
 
             elif message.text == "Минский городской нотариальный округ":
