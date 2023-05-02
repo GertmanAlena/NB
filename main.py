@@ -34,7 +34,7 @@ tm_cancel_recording = text_messages_bot_photo.Info_Zapis()
 url = url.URL()
 
 print('server started')
-log.server_started(now_time)
+log.server_started()
 
 db = dbcon()
 sql_.create_connection_mysql_db(db)
@@ -100,7 +100,7 @@ print("processing bot started...")
 def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
     идентификации в таблице."""
-    log.log_start(message, now_time)
+    log.log_start(message)
 
     photo = tm_start.photo()
     name = message.from_user.first_name
@@ -369,21 +369,12 @@ def bot_message(message):
                 mess = f'<u>{name} {last_name}</u>\n\nДля оформление болеее сложного действия ' \
                        f'Вам необходимо записаться на консультацию для получения необходимого ' \
                        f'Вам перечня документов либо уточнить информацию по телефону 📞 +375 216 56-88-94'
-                # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-                #
-                # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                #                bf.button_info_zapisi, bf.back)
                 bot.send_message(message.chat.id, mess, reply_markup=start_button(), parse_mode="html")
             else:
                 log.log_res(message)
                 mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
                        f'\n\nЯ Вас не понимаю!! '
-                # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-                #
-                # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                #                bf.button_info_zapisi, bf.back)
                 bot.send_message(message.chat.id, mess + '\U0001F534', reply_markup=start_button(), parse_mode="html")
-                # bot.send_message(message.chat.id, mess + '\U0001F534', parse_mode="html")
 
     except Exception as e:
         log.log_bot(message, e)
@@ -405,7 +396,7 @@ def start_button():
     markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
     markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                   bf.button_entry, bf.back, bf.button_cancel_recording)
+                   bf.button_entry, bf.button_cancel_recording, bf.back,)
 
     return markup_all
 
