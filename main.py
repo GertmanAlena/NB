@@ -112,9 +112,9 @@ def start(message):
     mess = f'<b>Здравствуйте, {name} {last_name}</b>' + tm_start.text_start()
 
     bot.send_photo(message.chat.id, photo)
-    markup = types.ReplyKeyboardMarkup(row_width=1)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    tel = types.KeyboardButton(" ПРОДОЛЖИТЬ \n и поделиться контактом", request_contact=True)
+    tel = types.KeyboardButton("нажми тут, чтобы 👉ПРОДОЛЖИТЬ👈 \n и поделиться контактом", request_contact=True)
     markup.add(tel)
 
     bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
@@ -125,11 +125,6 @@ def contact(message):
     res = sql_.create_reg(telephone, id_tel, db)
     if res is False:
         sql_.create_new_person(id_tel, telephone, message.from_user.first_name, message.from_user.last_name, db)
-
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-
-        markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi,
-                   bf.back, bf.button_cancel_recording)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -139,23 +134,16 @@ def contact(message):
         else:
             last_name = ""
         mess = f'{name} {last_name}' + tm_start.message_reg_ok()
-        bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+        bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=start_button(), parse_mode="html")
     else:
         if res[3] is None:
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi,
-                   bf.back, bf.button_cancel_recording)
             mess = f'<b>{res[0]} {res[1]}</b> {tm_start.message_reg_ok()} {tm_start.reg_ok2()}'
-            bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+            bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=start_button(), parse_mode="html")
         else:
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            markup.add(bf.button_website, bf.button_mail, bf.button_info_delo,
-                       bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
-
             mess = f'{res[0]} {res[1]} \n{tm_start.message_reg_ok()}' \
                    f'\nВаш нотариус <u><b>{res[3]}</b></u>\n' \
                    f'Ожидайте уведомление до <u><b>{res[2]}</b></u>\n{tm_start.reg_ok2()}'
-            bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
+            bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=start_button(), parse_mode="html")
 @bot.message_handler(commands=['help'])
 def help_command(message):
     log.log_help(message)
@@ -242,7 +230,7 @@ def bot_message(message):
                                  '*Перейдите по ссылке*\n' + '[ссылке](https://belnotary.by/nayti-notariusa/notariusy-belarusi/)',
                                  parse_mode='Markdown')
 
-            elif message.text == 'Написать e-mail':
+            elif message.text == 'Написать электронное письмо':
                 log.log_res(message)
                 mess = f'<b>{name} <u>{last_name}</u></b>\n' \
                        f'Выберите в какую контору Вы хотите написать письмо или позвонить?'
@@ -296,7 +284,7 @@ def bot_message(message):
                 markup.add(types.InlineKeyboardButton("Написать письмо",
                                                       url=url.url_notariat_baran))
 
-                bot.send_message(message.chat.id, "написать письмо?", reply_markup=markup)
+                bot.send_message(message.chat.id, " письмо?", reply_markup=markup)
             elif message.text == 'Записаться на приём к нотариусу':
                 log.log_zapis_bot(message)
                 mess = f'<b>{name} <u>{last_name}</u>\n\nчто Вы хотите оформить у нотариуса?</b>📄'
@@ -417,7 +405,8 @@ def start_button():
     markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
     markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                   bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
+                   bf.button_entry, bf.back, bf.button_cancel_recording)
+
     return markup_all
 
 def notarius_time(message, d, power_of_attorney):
