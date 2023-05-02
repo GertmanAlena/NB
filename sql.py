@@ -59,9 +59,12 @@ class Sql_Class():
             cursor.execute(sql_update_query, (id,))
             # cursor.execute(sql_update_query, id)
             query_result = cursor.fetchall()
-            for srok in query_result:
-                print("info ", srok)
-                return srok[0]
+            if query_result is None:
+                return None
+            else:
+                for srok in query_result:
+                    print("info ", srok)
+                    return srok[0]
         except db.Error as error:
             log.error_info(id, db.Error)
             print("Failed to get record from MySQL table: {}".format(error))

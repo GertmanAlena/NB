@@ -133,12 +133,15 @@ def search(telephone):
     result = ''
     try:
         wb = openpyxl.load_workbook(filePath)
-        for l in range(1, 13):          # проходим по листам в файле
+        day = DT.datetime.now().strftime("%d.%m.%Y")
+        start_month = DT.datetime.now().strftime("%m")
+
+        for l in range(int(start_month), 13):          # проходим по листам в файле
             mes = snfm.search_month(str(l))
             worksheet = wb[mes]
             max_rows = worksheet.max_row
             max_cols = worksheet.max_column
-            for i in range(1, max_rows + 1):            # по строкам
+            for i in range(3, max_rows + 1):            # по строкам
                 for j in range(1, max_cols + 1):            # по столбцам
                     result_zapis = []
                     if worksheet.cell(row=i, column=j).comment:         # если комментарий есть
@@ -149,64 +152,75 @@ def search(telephone):
                         for k in range(0, len(result)):
                             if result[k].isnumeric():
                                 tel = result[k]
-                            if str(telephone) == tel:
-                                notar = worksheet.cell(row=1, column=j).value
-                                action = str(worksheet.cell(row=i, column=j).value)
-                                time_zapis = str(worksheet.cell(row=i, column=1).value)
-                                if time_zapis == "08:00:00":
-                                    # str(worksheet.cell(row=dat, column=1).value).split(" ")[0]
-                                    a = str(worksheet.cell(row=i-1, column=1).value.split(" ")[0])
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "09:00:00":
-                                    a = str(worksheet.cell(row=i-2, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "10:00:00":
-                                    a = str(worksheet.cell(row=i-3, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "11:00:00":
-                                    a = str(worksheet.cell(row=i-4, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "12:00:00":
-                                    a = str(worksheet.cell(row=i-5, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "13:00:00":
-                                    a = str(worksheet.cell(row=i-6, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "14:00:00":
-                                    a = str(worksheet.cell(row=i-7, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "15:00:00":
-                                    a = str(worksheet.cell(row=i-8, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "16:00:00":
-                                    a = str(worksheet.cell(row=i-9, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "17:00:00":
-                                    a = str(worksheet.cell(row=i-10, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
-                                elif time_zapis == "18:00:00":
-                                    a = str(worksheet.cell(row=i-11, column=1).value)
-                                    data_zapis = str(a.split(" ")[0])
+                                if str(telephone) == tel:
+                                    notar = worksheet.cell(row=1, column=j).value
+                                    action = str(worksheet.cell(row=i, column=j).value)
+                                    time_zapis = str(worksheet.cell(row=i, column=1).value)
+                                    if time_zapis == "08:00:00":
+                                        a = str(worksheet.cell(row=i-1, column=1).value.split(" ")[0])
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "09:00:00":
+                                        a = str(worksheet.cell(row=i-2, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "10:00:00":
+                                        a = str(worksheet.cell(row=i-3, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "11:00:00":
+                                        a = str(worksheet.cell(row=i-4, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "12:00:00":
+                                        a = str(worksheet.cell(row=i-5, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "13:00:00":
+                                        a = str(worksheet.cell(row=i-6, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "14:00:00":
+                                        a = str(worksheet.cell(row=i-7, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "15:00:00":
+                                        a = str(worksheet.cell(row=i-8, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "16:00:00":
+                                        a = str(worksheet.cell(row=i-9, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "17:00:00":
+                                        a = str(worksheet.cell(row=i-10, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    elif time_zapis == "18:00:00":
+                                        a = str(worksheet.cell(row=i-11, column=1).value)
+                                        data_zapis = str(a.split(" ")[0])
+                                    if data_zapis.split(".")[2] == \
+                                            DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                                            data_zapis.split(".")[1] == \
+                                            DT.datetime.now().strftime("%d.%m.%Y").split(".")[
+                                                1] and \
+                                            data_zapis.split(".")[0] >= \
+                                            DT.datetime.now().strftime("%d.%m.%Y").split(".")[
+                                                0]:
+                                        result_zapis.append(action)
+                                        result_zapis.append(notar)
+                                        result_zapis.append(time_zapis)
+                                        result_zapis.append(data_zapis)
+                                        print('result_zapis ', result_zapis)
+                                        result_all.append(result_zapis)
+                                    elif data_zapis.split(".")[2] == \
+                                            DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
+                                            data_zapis.split(".")[1] > \
+                                            DT.datetime.now().strftime("%d.%m.%Y").split(".")[
+                                                1]:
+                                        result_zapis.append(action)
+                                        result_zapis.append(notar)
+                                        result_zapis.append(time_zapis)
+                                        result_zapis.append(data_zapis)
+                                        print('result_zapis ', result_zapis)
+                                        result_all.append(result_zapis)
+                            else:
+                                continue
                             # сравниваем день месяц и год, чтобы не попались прошедшие даты
-                        if data_zapis.split(".")[2] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
-                                data_zapis.split(".")[1] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[
-                            1] and \
-                                data_zapis.split(".")[0] >= DT.datetime.now().strftime("%d.%m.%Y").split(".")[
-                            0]:
-                            result_zapis.append(action)
-                            result_zapis.append(notar)
-                            result_zapis.append(time_zapis)
-                            result_zapis.append(data_zapis)
-                            result_all.append(result_zapis)
-                        elif data_zapis.split(".")[2] == DT.datetime.now().strftime("%d.%m.%Y").split(".")[2] and \
-                                data_zapis.split(".")[1] > DT.datetime.now().strftime("%d.%m.%Y").split(".")[
-                            1]:
-                            result_zapis.append(action)
-                            result_zapis.append(notar)
-                            result_zapis.append(time_zapis)
-                            result_zapis.append(data_zapis)
-                            result_all.append(result_zapis)
+
+        print('result_all ', result_all)
         return result_all
+
     except Exception as e:
         log.search(e)
         print(e)

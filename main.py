@@ -193,7 +193,9 @@ def bot_message(message):
                     mess = f'<b>Записи не найдены!!.</b> \n {tm_info_zapis.tel()}'
                     bot.send_message(message.chat.id, mess, parse_mode="html")
                 else:
+                    print('spisok ->', spisok)
                     for i in spisok:
+                        print('i ->', i)
                         action = i[0]
                         notarius = i[1]
                         time_zapis = i[2]
@@ -206,30 +208,34 @@ def bot_message(message):
             elif message.text == 'Информация о моём деле':
                 log.log_res(message)
                 sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
-                notarius = sql_.info_notarius(message.from_user.id, db)
-                zapros = sql_.info_zapros(message.from_user.id, db)
-                if notarius is None:
+                if sign_up_for_a_month is None:
                     mess = tm_info_delo.text_not_delo
-                    bot.send_message(message.chat.id, mess)
-
-                elif zapros is None:
-                    zapros = tm_info_delo.text_not_zapros
-                    mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
-                           f'{tm_info_delo.text_zapis_not} <b>{notarius}</b>' \
-                           f'\n{zapros}💁'
                     bot.send_message(message.chat.id, mess, parse_mode="html")
-                    bot.send_message(message.from_user.id,
-                                     tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
-                                     parse_mode='Markdown')
                 else:
-                    zapros = f'<b>Ответы на запросы получены, \nоб этом Вы были уведомлены</b> --> {zapros.split(" ")[1]}'
-                    mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
-                           f'{tm_info_delo.text_zapis_not} <b>{notarius}</b>' \
-                           f'\n{zapros}💁'
-                    bot.send_message(message.chat.id, mess, parse_mode="html")
-                    bot.send_message(message.from_user.id,
-                                     tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
-                                     parse_mode='Markdown')
+                    notarius = sql_.info_notarius(message.from_user.id, db)
+                    zapros = sql_.info_zapros(message.from_user.id, db)
+                    if notarius is None:
+                        mess = tm_info_delo.text_not_delo
+                        bot.send_message(message.chat.id, mess)
+
+                    elif zapros is None:
+                        zapros = tm_info_delo.text_not_zapros
+                        mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
+                               f'{tm_info_delo.text_zapis_not} <b>{notarius}</b>' \
+                               f'\n{zapros}💁'
+                        bot.send_message(message.chat.id, mess, parse_mode="html")
+                        bot.send_message(message.from_user.id,
+                                         tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
+                                         parse_mode='Markdown')
+                    else:
+                        zapros = f'<b>Ответы на запросы получены, \nоб этом Вы были уведомлены</b> --> {zapros.split(" ")[1]}'
+                        mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
+                               f'{tm_info_delo.text_zapis_not} <b>{notarius}</b>' \
+                               f'\n{zapros}💁'
+                        bot.send_message(message.chat.id, mess, parse_mode="html")
+                        bot.send_message(message.from_user.id,
+                                         tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
+                                         parse_mode='Markdown')
             elif message.text == 'Перейти на сайт и ознакомиться':
                 log.log_res(message)
                 bot.send_message(message.from_user.id,
@@ -239,7 +245,7 @@ def bot_message(message):
 
             elif message.text == 'Написать e-mail':
                 log.log_res(message)
-                mess = f'<b>{message.from_user.first_name} <u>{message.from_user.last_name}</u></b>\n' \
+                mess = f'<b>{name} <u>{last_name}</u></b>\n' \
                        f'Выберите в какую контору Вы хотите написать письмо или позвонить?'
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
