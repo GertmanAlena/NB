@@ -144,9 +144,8 @@ def contact(message):
         if res[3] is None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
             markup.add(bf.button_website, bf.button_mail, bf.button_info_delo, bf.button_entry, bf.button_info_zapisi,
-                       bf.backbf.button_website, bf.button_mail, bf.button_info_delo,
-                       bf.button_entry, bf.button_info_zapisi, bf.back, bf.button_cancel_recording)
-            mess = f'<b>{res[0]} {res[1]}</b>' + tm_start.reg_ok() + tm_start.reg_ok2()
+                   bf.back, bf.button_cancel_recording)
+            mess = f'<b>{res[0]} {res[1]}</b> {tm_start.message_reg_ok()} {tm_start.reg_ok2()}'
             bot.send_message(message.chat.id, mess + '\U0001f600', reply_markup=markup, parse_mode="html")
         else:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
