@@ -528,6 +528,7 @@ def zapis(message, notarius, d, notarial_document):
     переходим в файл exel -> zapis_not(time_records, notarius, d)
     """
     try:
+        print("----> ", message.text)
         log.log_zapis(message)
         if message.chat.type == 'private':
             name = message.from_user.first_name
@@ -535,10 +536,12 @@ def zapis(message, notarius, d, notarial_document):
                 last_name = ""
             else:
                 last_name = message.from_user.last_name
-        if message.text == "start":
+        if message.text == "/start":
             start(message)
         elif message.text == "Назад":
             bot_message(message)
+        elif message.text == "/help":
+            help_command(message)
         elif message.text != "start":
             if message.text == "08:00":
                 time_records = message.text
@@ -645,9 +648,6 @@ def callback_inline(call: types.CallbackQuery):
                                  reply_markup=start_button(), parse_mode="html")
 
         elif action == 'CANCEL':
-            # markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-            # markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-            #                bf.button_info_zapisi, bf.back)
             bot.send_message(chat_id=call.from_user.id, text='Отмена', reply_markup=start_button())
     except Exception as e:
         log.log_error_callback_inline(call.message.text, e)
