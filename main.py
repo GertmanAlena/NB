@@ -396,7 +396,7 @@ def start_button():
     markup_all = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
     markup_all.add(bf.button_info_delo, bf.button_website, bf.button_mail, bf.button_entry,
-                   bf.button_entry, bf.button_cancel_recording, bf.back,)
+                   bf.button_info_zapisi, bf.button_cancel_recording, bf.back,)
 
     return markup_all
 
@@ -496,7 +496,7 @@ def notarius_time(message, d, power_of_attorney):
                 mess = bot.send_message(message.from_user.id,
                                         text=f'<b>{name} <u>{last_name}</u>\n\n'
                                              f'Нотариус {C.notarius_name(notarius)}</b>\nработает {time_work}\n'
-                                             f'\nвыберайте свободное время, на которое нужно Вас записать🕘',
+                                             f'\nвыбирайте свободное время, на которое нужно Вас записать🕘',
                                         reply_markup=markup, parse_mode="html")
                 bot.register_next_step_handler(mess, zapis, notarius, d, power_of_attorney)
 
