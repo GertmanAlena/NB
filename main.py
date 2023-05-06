@@ -201,6 +201,7 @@ def bot_message(message):
                 else:
                     notarius = sql_.info_notarius(message.from_user.id, db)
                     zapros = sql_.info_zapros(message.from_user.id, db)
+
                     if notarius is None:
                         mess = tm_info_delo.text_not_delo
                         bot.send_message(message.chat.id, mess)
@@ -214,6 +215,18 @@ def bot_message(message):
                         bot.send_message(message.from_user.id,
                                          tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
                                          parse_mode='Markdown')
+                    elif len(zapros) == 10:
+                        res = n.notif2(db, message.from_user.id)
+                        print(res)
+                        if res is True:
+
+                            mess = f'<b>{name} <u>{last_name}</u></b>\n\n Ответы за запросы получены! в срок до <b>{sign_up_for_a_month}</b>' \
+                                   f'{tm_info_delo.text_zapis_not} <b>{notarius}</b>' \
+                                   f'\n{zapros}💁'
+                            bot.send_message(message.chat.id, mess, parse_mode="html")
+                            bot.send_message(message.from_user.id,
+                                             tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
+                                             parse_mode='Markdown')
                     else:
                         zapros = f'<b>Ответы на запросы получены, \nоб этом Вы были уведомлены</b> --> {zapros.split(" ")[1]}'
                         mess = f'<b>{name} <u>{last_name}</u></b>\n\nв срок до <b>{sign_up_for_a_month}</b>' \
