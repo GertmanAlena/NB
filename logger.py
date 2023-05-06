@@ -3,59 +3,57 @@ import os
 import zipfile
 from logging.handlers import TimedRotatingFileHandler
 
-global now_time
-global filename
 filename = 'loggerBot.log'
 now_time = DT.datetime.now()
-def size_file(filename):
-    stats = os.stat(filename)
-    if stats.st_size > 500:
-        filename2 = 'D:\\studies\\BotNotaryMy\\zip_file\\'+ str(now_time.strftime("%d-%m-%Y %H:%M")) + 'loggerBot.zip'
-        jungle_zip = zipfile.ZipFile(filename2, 'w')
-        jungle_zip.write(filename2, compress_type=zipfile.ZIP_DEFLATED)
-        jungle_zip.close()
-        f = open(filename, 'w')
-        f.close()
+# def size_file(filename):
+#     stats = os.stat(filename)
+#     if stats.st_size > 1000:
+#
+#         jungle_zip = zipfile.ZipFile(filename, 'w')
+#         jungle_zip.write(filename, compress_type=zipfile.ZIP_DEFLATED)
+#         jungle_zip.close()
+#         f = open(filename, 'w')
+#         f.close()
 
 def server_started():
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'сервер запущен', file=botlogfile)
     botlogfile.close()
 def log_start(message):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(
         f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
         f'started bot {message.text}', file=botlogfile)
     botlogfile.close()
 def log_Connect_sql():
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'соединение с базой SQL прошло успешно ', file=botlogfile)
     botlogfile.close()
 def query_res(row):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(f'{now_time.strftime("%d-%m-%Y %H:%M")} в базе найдены совпадения по дате уведомления\n{row}',
           file=botlogfile)
     botlogfile.close()
 def log_error(db_connection_error):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'произошла ошибка при поиске совпадений '
                                                'по дате уведомления таблицы SQL ' % db_connection_error,
           file=botlogfile)
     botlogfile.close()
 def log_error_connection_mysql_db(db_connection_error):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     time_log = now_time.strftime("%d-%m-%Y %H:%M")
     text_log = 'произошла ошибка при создании таблицы '
     print(time_log, text_log, db_connection_error, file=botlogfile)
     botlogfile.close()
 def log_help(message):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'перешёл в меню ->: ' + message.text, file=botlogfile)
@@ -63,19 +61,19 @@ def log_help(message):
 
 
 def log_sticker(message, sticker_id):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'послал стикер боту: ' + sticker_id, file=botlogfile)
     botlogfile.close()
 def log_res(message):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'перешёл в меню ->: ' + message.text, file=botlogfile)
     botlogfile.close()
 def replies_received(name, id):
-    size_file(filename)
+    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + name, id,
           'получил уведомление "на все запросы пришли ответы" ->: ', file=botlogfile)

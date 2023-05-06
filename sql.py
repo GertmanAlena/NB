@@ -57,7 +57,6 @@ class Sql_Class():
         try:
             sql_update_query = """SELECT srok FROM personNotary WHERE id = ? """
             cursor.execute(sql_update_query, (id,))
-            # cursor.execute(sql_update_query, id)
             query_result = cursor.fetchall()
             if query_result is None:
                 return None
