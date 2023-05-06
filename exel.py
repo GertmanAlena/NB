@@ -5,7 +5,7 @@ from openpyxl.comments import Comment
 import search_name_file_month as snfm
 import datetime as DT
 
-filePath = 'D:/studies/BotNotaryMy/Notarius/Zapis.xlsx'
+filePath = 'Notarius/Zapis.xlsx'
 def x_file(day, notarius):
     """
     метод выбора свободного времени для записи

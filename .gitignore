@@ -159,5 +159,5 @@ dmypy.json
 cython_debug/
 
 config.py
-notary.db
+Bot/notary.db
 loggerBot.log
