@@ -1,59 +1,39 @@
 import datetime as DT
-import os
-import zipfile
-from logging.handlers import TimedRotatingFileHandler
 
 filename = 'loggerBot.log'
 now_time = DT.datetime.now()
-# def size_file(filename):
-#     stats = os.stat(filename)
-#     if stats.st_size > 1000:
-#
-#         jungle_zip = zipfile.ZipFile(filename, 'w')
-#         jungle_zip.write(filename, compress_type=zipfile.ZIP_DEFLATED)
-#         jungle_zip.close()
-#         f = open(filename, 'w')
-#         f.close()
-
 def server_started():
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'сервер запущен', file=botlogfile)
     botlogfile.close()
 def log_start(message):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(
         f'{now_time.strftime("%d-%m-%Y %H:%M")} пользователь {message.from_user.first_name} id-{message.from_user.id} '
         f'started bot {message.text}', file=botlogfile)
     botlogfile.close()
 def log_Connect_sql():
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'соединение с базой SQL прошло успешно ', file=botlogfile)
     botlogfile.close()
 def query_res(row):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(f'{now_time.strftime("%d-%m-%Y %H:%M")} в базе найдены совпадения по дате уведомления\n{row}',
           file=botlogfile)
     botlogfile.close()
 def log_error(db_connection_error):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'произошла ошибка при поиске совпадений '
                                                'по дате уведомления таблицы SQL ' % db_connection_error,
           file=botlogfile)
     botlogfile.close()
 def log_error_connection_mysql_db(db_connection_error):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     time_log = now_time.strftime("%d-%m-%Y %H:%M")
     text_log = 'произошла ошибка при создании таблицы '
     print(time_log, text_log, db_connection_error, file=botlogfile)
     botlogfile.close()
 def log_help(message):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'перешёл в меню ->: ' + message.text, file=botlogfile)
@@ -61,19 +41,16 @@ def log_help(message):
 
 
 def log_sticker(message, sticker_id):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'послал стикер боту: ' + sticker_id, file=botlogfile)
     botlogfile.close()
 def log_res(message):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + message.from_user.first_name, message.from_user.id,
           'перешёл в меню ->: ' + message.text, file=botlogfile)
     botlogfile.close()
 def replies_received(name, id):
-    # size_file(filename)
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), 'пользователь ' + name, id,
           'получил уведомление "на все запросы пришли ответы" ->: ', file=botlogfile)
@@ -102,11 +79,24 @@ def log_error3(message, e):
         f'{now_time.strftime("%d-%m-%Y %H:%M")} у пользователя {message.from_user.first_name} id-{message.from_user.id} '
         f'произошла ошибка при добавлении id {e}', file=botlogfile)
     botlogfile.close()
+def log_error4(message, telephon, id_tel):
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} у пользователя {id_tel} телефон-{telephon} '
+        f'произошла ошибка при поиске по номеру телефона человека в методе create_reg', file=botlogfile)
+    botlogfile.close()
+
+def log_error5(message, id, tel, name, l_name):
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(
+        f'{now_time.strftime("%d-%m-%Y %H:%M")} у пользователя {name} {l_name} телефон-{tel} id {id} '
+        f'произошла ошибка при регистрации', file=botlogfile)
+    botlogfile.close()
 def error_info(id, e):
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(
         f'{now_time.strftime("%d-%m-%Y %H:%M")} у пользователя c id-{id} '
-        f'произошла ошибка при запросе информации о деле {e}', file=botlogfile)
+        f'произошла ошибка {e}', file=botlogfile)
     botlogfile.close()
 def person_add_bd(now_time, user_id, first_name, last_name, date, date_sms):
     botlogfile = open(filename, 'a', encoding='utf-8')
@@ -197,9 +187,27 @@ def log_error_callback_inline(message, e):
     print(now_time.strftime("%d-%m-%Y %H:%M"), f'{message} \nпроизошла ошибка в календаре \n{e}',
           file=botlogfile)
     botlogfile.close()
-def save_file(e, text):
+def save_file_except(e, text):
 
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), f'произошла ошибка в {text}  \n{e}',
           file=botlogfile)
+    botlogfile.close()
+def save_file(time, notarius, day, power_of_attorney, name, last_name, tel):
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f' пользователь {name} {last_name} {tel} записался '
+                                               f'к нотариусу {notarius} {day} {time} для оформления {power_of_attorney} \n',
+          file=botlogfile)
+    botlogfile.close()
+
+def log_otmetka_uvedomlen(id):
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f' пользователь c {id} уведомлен о поступлениизапросов \n',
+          file=botlogfile)
+    botlogfile.close()
+
+def log_otmetka_uvedomlen_except(text):
+
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), f' ошибка в методе otmetka_uvedomlen {text}', file=botlogfile)
     botlogfile.close()

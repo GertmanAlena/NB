@@ -118,9 +118,10 @@ def save_file(time, notarius, day, power_of_attorney, name, last_name, tel):
                 comment = Comment(text=res, author='-')
                 worksheet.cell(row=k, column=column_not).comment = comment
                 wb.save(filePath)
+                log.save_file(time, notarius, day, power_of_attorney, name, last_name, tel)
                 return True
     except Exception as e:
-        log.save_file(e, "save_file")
+        log.save_file_except(e, "save_file")
         print(e)
         return False
 def search(telephone):
@@ -227,7 +228,6 @@ def search(telephone):
         return False
 
 def delete_file(mess):
-
     day = mess.split(' ')[7]
     time = mess.split(' ')[5]
     notarius = mess.split(' ')[1]
@@ -243,31 +243,26 @@ def delete_file(mess):
     :param day: день для записи
     :return:
     """
-
     max_rows = worksheet.max_row
     max_cols = worksheet.max_column
     try:
-        for dat in range(1, max_rows+1):
-            # ищем нужную дату в строке
+        for dat in range(1, max_rows+1):   # ищем нужную дату в строке
             z = str(worksheet.cell(row=dat, column=1).value)
             x = z.split(" ")[0]
             if worksheet.cell(row=dat, column=1).value is not None and\
                     day == x:
                 row_day = dat
-        # ищем нотариуса
-        for i in range(1, max_cols + 1):
+        for i in range(1, max_cols + 1):   # ищем нотариуса
             if worksheet.cell(row=1, column=i).value == notarius:
                 column_not = i
-        # ищем нужное время
-        for k in range(row_day + 1, row_day + 12):
+        for k in range(row_day + 1, row_day + 12):   # ищем нужное время
             x=worksheet.cell(row=k, column=1).value.strftime("%H:%M:%S")
             if worksheet.cell(row=k, column=1).value is not None and time == x:
                 worksheet.cell(row=k, column=column_not).value = None
-                # comment = Comment(text=None, author=None)
                 worksheet.cell(row=k, column=column_not).comment = None
                 wb.save(filePath)
                 return True
     except Exception as e:
-        log.save_file(e, "save_file")
+        log.save_file_except(e, "save_file")
         print(e)
         return False

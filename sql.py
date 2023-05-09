@@ -21,7 +21,7 @@ class Sql_Class():
 
         db.commit()
         cursor.close()
-    def otm(self, id, db):
+    def otmetka_uvedomlen(self, id, db):
         """если в базе найден человек, которого необходимо уведомить,
         бот уведомляет и ставит отметку "уведомлены и дата" """
 
@@ -32,10 +32,8 @@ class Sql_Class():
         print("data_sms ", data_sms)
 
         """изменение значения ячейки"""
-
         cursor = db.cursor()
         try:
-
             sql_update_query = """Update personNotary set data_sms = ? where id = ?"""
             data = (data_sms, id)
             cursor.execute(sql_update_query, data)
@@ -43,9 +41,9 @@ class Sql_Class():
             print("Запись успешно обновлена")
             db.commit()
             cursor.close()
-
+            log.log_otmetka_uvedomlen(id)
         except db.Error as error:
-
+            log.log_otmetka_uvedomlen_except("Failed to get record from MySQL table: {}".format(error))
             print("Failed to get record from MySQL table: {}".format(error))
 
     def info_srok(self, id, db):
@@ -66,8 +64,8 @@ class Sql_Class():
                     print("info ", srok)
                     return srok[0]
         except db.Error as error:
-            log.error_info(id, db.Error)
-            print("Failed to get record from MySQL table: {}".format(error))
+            log.error_info(id, "Error: %s" % error)
+            print("Ошибка в методе info_srok: {}".format(error))
 
     def info_notarius(self, id, db):
         """ответ на запрос пользователя о предоставлении онформации по делу """
@@ -80,8 +78,8 @@ class Sql_Class():
                 if (len(query_result)) == 1:
                     return notarius[0]
         except db.Error as error:
-            log.error_info(id, db.Error)
-            print("Failed to get record from MySQL table: {}".format(error))
+            log.error_info(id, "Error: %s" % error)
+            print("Ошибка в методе info_notarius: {}".format(error))
 
     def info_zapros(self, id, db):
         """
@@ -108,7 +106,7 @@ class Sql_Class():
 
         except db.Error as error:
 
-            log.error_info(id, db.Error)
+            log.error_info(id, "Ошибка в методе info_zapros: %s" % error)
             print("Failed to get record from MySQL table: {}".format(error))
 
     def create_reg(self, telephon, id_tel, db):
@@ -123,33 +121,22 @@ class Sql_Class():
         result = []
         try:
             sql = """select * from personNotary where telephone_number = ? """
-
             cursor.execute(sql, (telephon,))
             query_result = cursor.fetchall()
-            print(len(query_result))
-
             if len(query_result) == 0:
                 return False
             else:
-
                 for user in query_result:
                     sql = f"""UPDATE personNotary SET id = {id_tel} WHERE telephone_number = ?"""
                     cursor.execute(sql, (telephon,))
-                    print(user)
                     result.append(user[2])
                     result.append(user[3])
                     result.append(user[9])
                     result.append(user[10])
-                    print(result)
-                    print("добавили id")
-
                     db.commit()
-
-
                 return result
         except db.Error as error:
-            # log.log_error3(error)
-            print("Failed to get record from MySQL table: {}".format(error))
+            log.log_error4("Ошибка в методе create_reg: %s" % error, telephon, id_tel)
             return None
         cursor.close()
 
@@ -165,13 +152,14 @@ class Sql_Class():
         """
         cursor = db.cursor()
         try:
-            sql = """INSERT INTO personNotary (id, telephone_number, first_name, last_name) VALUES (?, ?, ?, ?) """
+            sql = """INSERT INTO personNotary (id, telephone_number, first_name, last_name) 
+                    VALUES (?, ?, ?, ?) """
             cursor.execute(sql, (id, tel, name, l_name))
             query_result = cursor.fetchall()
             db.commit()
 
         except db.Error as error:
-            # log.log_error3(error)
+            log.log_error5("Ошибка в методе create_new_person: %s" % error, id, tel, name, l_name)
             print("Failed to get record from MySQL table: {}".format(error))
 
         cursor.close()
@@ -190,7 +178,7 @@ class Sql_Class():
                 print("tel ", tel[0])
                 return tel[0]
         except db.Error as error:
-            log.error_info(id, db.Error)
+            log.error_info(id, "Ошибка в методе info_id: %s" % error)
             print("Failed to get record from MySQL table: {}".format(error))
 
     def info_telephone(self, id, db):
@@ -204,6 +192,6 @@ class Sql_Class():
                return tel[0]
 
         except db.Error as error:
-            log.error_info(id, db.Error)
+            log.error_info(id, "Ошибка в методе info_telephone: %s" % error)
             print("Failed to get record from MySQL table: {}".format(error))
 

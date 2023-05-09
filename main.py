@@ -12,19 +12,19 @@ from data_base import dbcon
 from _locale import Error
 from myTime import then, then3
 from exel import x_file, save_file
-import button_file
+from button_file import Button as bf
 import exel as ex
 import url
 import notification as n
 import search_notar_doc as C
 import text_messages_bot_photo
+# from sql import Sql_Class as sql_
 import sql
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
 now_time = DT.datetime.now()
 
-sql_ = sql.Sql_Class()
-bf = button_file.Button()
+sc = sql.Sql_Class()
 tm_info_delo = text_messages_bot_photo.Info_Delo()
 tm_info_zapis = text_messages_bot_photo.Info_Zapis()
 tm_info_notification = text_messages_bot_photo.Info_Notification()
@@ -37,12 +37,10 @@ print('server started')
 log.server_started()
 
 db = dbcon()
-sql_.create_connection_mysql_db(db)
+sc.create_connection_mysql_db(db)
 log.log_Connect_sql()
-
 calendar = Calendar(language=RUSSIAN_LANGUAGE)
 calendar_1 = CallbackData('calendar_1', 'action', 'year', 'month', 'day')
-
 
 def do_work():
     """метод ожидания нужного времени и даты для уведомления второй поток"""
@@ -51,7 +49,7 @@ def do_work():
         """уведомление, когда пришли ответы на все запросы по НД"""
         print("while True requests...")
         if DT.datetime.now().strftime("%H:%M") == then3:
-            res = n.notif(db)
+            res = n.noif(db)
             try:
                 if res is not None:
                     for i in res:
@@ -86,7 +84,7 @@ def do_work():
                         }
                         response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
                                                 params=params)
-                        sql_.otm(row[0], db)
+                        sc.otmetka_uvedomlen(row[0], db)
                     time.sleep(65)
                 else:
                     time.sleep(30)
@@ -101,14 +99,12 @@ def start(message):
     """при переходе в меню /start пользователь подтверждает свой телефон для его
     идентификации в таблице."""
     log.log_start(message)
-
     photo = tm_start.photo()
     name = message.from_user.first_name
     if message.from_user.last_name is None:
         last_name = ""
     else:
         last_name = message.from_user.last_name
-
     mess = f'<b>Здравствуйте, {name} {last_name}</b>' + tm_start.text_start()
 
     bot.send_photo(message.chat.id, photo)
@@ -122,9 +118,9 @@ def start(message):
 def contact(message):
     telephone = message.contact.phone_number
     id_tel = message.chat.id
-    res = sql_.create_reg(telephone, id_tel, db)
+    res = sc.create_reg(telephone, id_tel, db)
     if res is False:
-        sql_.create_new_person(id_tel, telephone, message.from_user.first_name, message.from_user.last_name, db)
+        sc.create_new_person(id_tel, telephone, message.from_user.first_name, message.from_user.last_name, db)
         if message.from_user.first_name is not None:
             name = message.from_user.first_name
         else:
@@ -174,7 +170,7 @@ def bot_message(message):
                 last_name = message.from_user.last_name
 
             if message.text == 'Найти сведения о моей записи':
-                telephone = sql_.info_telephone(message.from_user.id, db)
+                telephone = sc.info_telephone(message.from_user.id, db)
                 spisok = ex.search(telephone)
                 if len(spisok) == 0:
                     mess = f'<b>Записи не найдены!!.</b> \n {tm_info_zapis.tel()}'
@@ -194,13 +190,13 @@ def bot_message(message):
 
             elif message.text == 'Информация о моём деле':
                 log.log_res(message)
-                sign_up_for_a_month = sql_.info_srok(message.from_user.id, db)
+                sign_up_for_a_month = sc.info_srok(message.from_user.id, db)
                 if sign_up_for_a_month is None:
                     mess = tm_info_delo.text_not_delo
                     bot.send_message(message.chat.id, mess, parse_mode="html")
                 else:
-                    notarius = sql_.info_notarius(message.from_user.id, db)
-                    zapros = sql_.info_zapros(message.from_user.id, db)
+                    notarius = sc.info_notarius(message.from_user.id, db)
+                    zapros = sc.info_zapros(message.from_user.id, db)
 
                     if notarius is None:
                         mess = tm_info_delo.text_not_delo
@@ -216,7 +212,7 @@ def bot_message(message):
                                          tm_info_delo.text_zapis_not2 + '\u261E' + '[НАЖМИ ТУТ](https://enotary.by/#/legacy/)',
                                          parse_mode='Markdown')
                     elif len(zapros) == 10:
-                        res = n.notif2(db, message.from_user.id)
+                        res = n.notif(db, message.from_user.id)
                         print(res)
                         if res is True:
 
@@ -309,7 +305,7 @@ def bot_message(message):
                 bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
             elif message.text == '✔️Отмена записи':
 
-                telephone = sql_.info_telephone(message.from_user.id, db)
+                telephone = sc.info_telephone(message.from_user.id, db)
                 spisok = ex.search(telephone)
                 if len(spisok) == 0:
                     mess = f'<b>Записи не найдены!!.</b> \n {tm_info_zapis.tel()}'
@@ -415,7 +411,7 @@ def start_button():
 
 def notarius_time(message, d, power_of_attorney):
     """
-    :param power_of_attorney:
+    :param power_of_attorney: нотариальное действие
     :param message: переходим в метод с выбранным нотариусом
     :param d: принимает день для записи
     notarius сохраняет Фамилию инициалы выбранного нотариуса
@@ -530,7 +526,7 @@ def notarius_time(message, d, power_of_attorney):
             bot.send_message(message.chat.id, mess, reply_markup=markup_exception, parse_mode="html")
 
 
-def zapis(message, notarius, d, notarial_document):
+def zapis(message, notarius, day_records, notarial_document):
     """
     метод для поиска времени записи к нотариусу
     :param notarial_document: документ, который выбрал клиент для оформления
@@ -579,11 +575,11 @@ def zapis(message, notarius, d, notarial_document):
             elif message.text == "18:00":
                 time_records = message.text
             id_tel = message.chat.id
-            tel = sql_.info_id(id_tel, db)
-            bol = save_file(time_records, notarius, d, notarial_document, name, last_name, tel)
+            tel = sc.info_id(id_tel, db)
+            bol = save_file(time_records, notarius, day_records, notarial_document, name, last_name, tel)
             print(bol)
             if bol:
-                mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {C.notarius_name(notarius)} \n{d} в {time_records}</b>' \
+                mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {C.notarius_name(notarius)} \n{day_records} в {time_records}</b>' \
                        f'\n{C.documents(notarial_document)}'
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
                 back = types.KeyboardButton('Назад')
