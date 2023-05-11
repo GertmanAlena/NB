@@ -16,9 +16,8 @@ from button_file import Button as bf
 import exel as ex
 import url
 import notification as n
-import search_notar_doc as C
+import search_notar_doc as snd
 import text_messages_bot_photo
-# from sql import Sql_Class as sql_
 import sql
 
 bot = telebot.TeleBot(token=config.TOKEN, threaded=True)
@@ -106,10 +105,8 @@ def start(message):
     else:
         last_name = message.from_user.last_name
     mess = f'<b>Здравствуйте, {name} {last_name}</b>' + tm_start.text_start()
-
     bot.send_photo(message.chat.id, photo)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-
     tel = types.KeyboardButton("нажми тут, чтобы 👉ПРОДОЛЖИТЬ👈 \n и поделиться контактом", request_contact=True)
     markup.add(tel)
 
@@ -168,7 +165,6 @@ def bot_message(message):
                 last_name = ""
             else:
                 last_name = message.from_user.last_name
-
             if message.text == 'Найти сведения о моей записи':
                 telephone = sc.info_telephone(message.from_user.id, db)
                 spisok = ex.search(telephone)
@@ -180,14 +176,13 @@ def bot_message(message):
                     for i in spisok:
                         print('i ->', i)
                         action = i[0]
-                        notarius = i[1]
+                        notarius = snd.notarius_name(i[1])
                         time_zapis = i[2]
                         data_zapis = i[3]
-                        mess = f'Вот что я нашёл, посмотрите. \n' \
-                               f'Вы записаны на <b>{action}</b> к нотариусу <u>{notarius} в {time_zapis} {data_zapis}</u>' \
-                               + tm_info_zapis.tel()
-                        bot.send_message(message.chat.id, mess, parse_mode="html")
+                        mess = f'Вот что я нашёл, посмотрите.\n\n' \
+                               f'{data_zapis}\nВы записаны на <b>{action}</b> к нотариусу \n<u>{notarius} в {time_zapis} </u>' \
 
+                        bot.send_message(message.chat.id, mess, parse_mode="html")
             elif message.text == 'Информация о моём деле':
                 log.log_res(message)
                 sign_up_for_a_month = sc.info_srok(message.from_user.id, db)
@@ -304,7 +299,6 @@ def bot_message(message):
 
                 bot.send_message(message.from_user.id, mess, reply_markup=markup, parse_mode="html")
             elif message.text == '✔️Отмена записи':
-
                 telephone = sc.info_telephone(message.from_user.id, db)
                 spisok = ex.search(telephone)
                 if len(spisok) == 0:
@@ -318,17 +312,14 @@ def bot_message(message):
                     for i in range(0, len(spisok)):
                         res = f'нотариус {spisok[i][1]} - {spisok[i][0]} время {spisok[i][2]} дата {spisok[i][3]}'
                         print(res, "res")
-
                         button = types.KeyboardButton(res)
                         markup.add(button)
                     back = types.KeyboardButton('Назад')
                     markup.add(back)
-
                     mess = bot.send_message(message.from_user.id,
                                             text=f'<b>{name} <u>{last_name}</u></b>\n\nЧто удалять?',
                                             reply_markup=markup, parse_mode="html")
                     bot.register_next_step_handler(mess, delete_file)
-
             elif message.text == '✔️Доверенность':
                 log.log_res(message)
                 power_of_attorney = "Доверенность"
@@ -383,7 +374,8 @@ def bot_message(message):
                 log.log_res(message)
                 mess = f'{message.text}\n\n<b>{name} <u>{last_name}</u></b>' \
                        f'\n\nЯ Вас не понимаю!! '
-                bot.send_message(message.chat.id, mess + '\U0001F534', reply_markup=start_button(), parse_mode="html")
+                bot.send_message(message.chat.id, mess + '\U0001F534', reply_markup=start_button(),
+                                 parse_mode="html")
 
     except Exception as e:
         log.log_bot(message, e)
@@ -458,13 +450,13 @@ def notarius_time(message, d, power_of_attorney):
             elif free_time[0] == "выходной":
                 log.log_day_off(message)
                 mess2 = f'\n{name} {last_name}\n\n' \
-                        f'Нотариус <b>{C.notarius_name(notarius)}</b>  {d} <b>{tm_info_zapis.day_off()}</b>'
+                        f'Нотариус <b>{snd.notarius_name(notarius)}</b>  {d} <b>{tm_info_zapis.day_off()}</b>'
                 bot.send_message(message.chat.id, mess2, reply_markup=start_button(), parse_mode="html")
             elif len(free_time) == 1:
                 log.log_busy(message)
                 mess = bot.send_message(message.from_user.id,
                                         text=f'<b>{name} <u>{last_name}</u>\n\n️'
-                                             f'У нотариуса {C.notarius_name(notarius)}</b>\n'
+                                             f'У нотариуса {snd.notarius_name(notarius)}</b>\n'
                                              f'{d} ‼ нет свободного времени для записи ‼\n️'
                                              f'\nпопробуйте выбрать другую дату',
                                         parse_mode="html")
@@ -488,7 +480,7 @@ def notarius_time(message, d, power_of_attorney):
                 if time_work == "выходной":
                     log.log_day_off(message)
                     mess2 = f'\n<b>{name} <u>{last_name}</u>\n\n' \
-                            f'Нотариус {C.notarius_name(notarius)}</b>\n' \
+                            f'Нотариус {snd.notarius_name(notarius)}</b>\n' \
                             f'{d} ‼ НЕ РАБОТАЕТ ‼\n' \
                             f'\nпопробуйте выбрать другую дату чтобы оформить {power_of_attorney} ??🗓️</b>'
                     bot.send_message(message.chat.id, mess2, reply_markup=calendar.create_calendar(
@@ -504,7 +496,7 @@ def notarius_time(message, d, power_of_attorney):
                 markup.add(back)
                 mess = bot.send_message(message.from_user.id,
                                         text=f'<b>{name} <u>{last_name}</u>\n\n'
-                                             f'Нотариус {C.notarius_name(notarius)}</b>\nработает {time_work}\n'
+                                             f'Нотариус {snd.notarius_name(notarius)}</b>\nработает {time_work}\n'
                                              f'\nвыбирайте свободное время, на которое нужно Вас записать🕘',
                                         reply_markup=markup, parse_mode="html")
                 bot.register_next_step_handler(mess, zapis, notarius, d, power_of_attorney)
@@ -579,8 +571,8 @@ def zapis(message, notarius, day_records, notarial_document):
             bol = save_file(time_records, notarius, day_records, notarial_document, name, last_name, tel)
             print(bol)
             if bol:
-                mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {C.notarius_name(notarius)} \n{day_records} в {time_records}</b>' \
-                       f'\n{C.documents(notarial_document)}'
+                mess = f'<b>{name} <u>{last_name}</u>\n\n✔Вы записаны к нотариусу {snd.notarius_name(notarius)} \n{day_records} в {time_records}</b>' \
+                       f'\n{snd.documents(notarial_document)}'
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
                 back = types.KeyboardButton('Назад')
                 markup.add(back)

@@ -247,8 +247,8 @@ def delete_file(mess):
     max_cols = worksheet.max_column
     try:
         for dat in range(1, max_rows+1):   # ищем нужную дату в строке
-            z = str(worksheet.cell(row=dat, column=1).value)
-            x = z.split(" ")[0]
+            str_value = str(worksheet.cell(row=dat, column=1).value)
+            x = str_value.split(" ")[0]
             if worksheet.cell(row=dat, column=1).value is not None and\
                     day == x:
                 row_day = dat
