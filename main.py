@@ -48,10 +48,11 @@ def do_work():
         """уведомление, когда пришли ответы на все запросы по НД"""
         print("while True requests...")
         if DT.datetime.now().strftime("%H:%M") == then3:
-            res = n.noif(db)
+            res = n.notif(db)
             try:
                 if res is not None:
                     for i in res:
+
                         if i[3] is None:  # если графа с фамилией пуста, фамилию не пишем
                             params = {
                                 'chat_id': i[0],
@@ -77,13 +78,22 @@ def do_work():
                 query_result = cursor.fetchall()
                 if len(query_result) != 0:
                     for row in query_result:
-                        params = {
-                            'chat_id': row[0],
-                            'text': f'{row[2]} {row[3]}\n\n{tm_info_notification.text_zapis} {row[10]} в срок до {row[9]}',
-                        }
-                        response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
-                                                params=params)
-                        sc.otmetka_uvedomlen(row[0], db)
+                        print("row[0] = ", row[0])
+                        if row[0] == ' ':
+                            params = {
+                                'chat_id': row[0],
+                                'text': f'{row[2]} {row[3]}\n\n{tm_info_notification.text_zapis} {row[10]} в срок до {row[9]}',
+                            }
+                            response = requests.get('https://api.telegram.org/bot' + config.TOKEN + '/sendMessage',
+                                                    params=params)
+                            sc.otmetka_uvedomlen(row[0], db)
+                        else:
+                            # log.no_identification(f"пользователь с номером телефона {row[1]} "
+                            #                       f"не зарегистрировался в боте. Уведомить не получилось")
+
+                            print(f"пользователь с номером телефона {row[1]} "
+                                                  f"не зарегистрировался в боте. Уведомить не получилось")
+                            sc.otmetka_NO_uvedomlen(row[1], db)
                     time.sleep(65)
                 else:
                     time.sleep(30)
@@ -187,8 +197,16 @@ def bot_message(message):
                 log.log_res(message)
                 sign_up_for_a_month = sc.info_srok(message.from_user.id, db)
                 if sign_up_for_a_month is None:
-                    mess = tm_info_delo.text_not_delo
-                    bot.send_message(message.chat.id, mess, parse_mode="html")
+                    mess = tm_info_delo.text_not_delo + \
+                           "\n<b>ИЛИ</b>\n\nМожем поискать по Вашему номеру телефона\nНажмите на кнопку ниже, чтобы продолжить"
+
+                    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                    tel = types.KeyboardButton("нажми тут, чтобы 👉ПРОДОЛЖИТЬ👈 \n и поделиться контактом",
+                                               request_contact=True)
+                    markup.add(tel)
+
+                    bot.send_message(message.chat.id, mess, reply_markup=markup, parse_mode="html")
+
                 else:
                     notarius = sc.info_notarius(message.from_user.id, db)
                     zapros = sc.info_zapros(message.from_user.id, db)
@@ -196,6 +214,8 @@ def bot_message(message):
                     if notarius is None:
                         mess = tm_info_delo.text_not_delo
                         bot.send_message(message.chat.id, mess)
+
+
 
                     elif zapros is None:
                         zapros = tm_info_delo.text_not_zapros

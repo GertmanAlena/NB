@@ -195,3 +195,27 @@ class Sql_Class():
             log.error_info(id, "Ошибка в методе info_telephone: %s" % error)
             print("Failed to get record from MySQL table: {}".format(error))
 
+    def otmetka_NO_uvedomlen(self, tel, db):
+        """если в базе найден человек, которого необходимо уведомить,
+        НО бот не может уведомить, потому что нет ID " """
+
+        text = " НЕ УВЕДОМЛЕН!!! "
+        data = str(datetime.now().strftime("%d.%m.%Y"))
+        data_sms = text + data
+        print("data_sms ", data_sms)
+
+        """изменение значения ячейки"""
+        cursor = db.cursor()
+        try:
+            sql_update_query = """Update personNotary set data_sms = ? where telephone_number = ?"""
+            data = (data_sms, tel)
+            cursor.execute(sql_update_query, data)
+            db.commit()
+            print("Запись успешно обновлена")
+            db.commit()
+            cursor.close()
+            log.no_identification(f"пользователь с номером телефона {tel} "
+                                  f"не зарегистрировался в боте. Уведомить не получилось")
+        except db.Error as error:
+            log.log_otmetka_uvedomlen_except("Failed to get record from MySQL table: {}".format(error))
+            print("Failed to get record from MySQL table: {}".format(error))

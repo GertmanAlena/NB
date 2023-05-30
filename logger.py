@@ -211,3 +211,8 @@ def log_otmetka_uvedomlen_except(text):
     botlogfile = open(filename, 'a', encoding='utf-8')
     print(now_time.strftime("%d-%m-%Y %H:%M"), f' ошибка в методе otmetka_uvedomlen {text}', file=botlogfile)
     botlogfile.close()
+def no_identification(text):
+
+    botlogfile = open(filename, 'a', encoding='utf-8')
+    print(now_time.strftime("%d-%m-%Y %H:%M"), text, file=botlogfile)
+    botlogfile.close()
